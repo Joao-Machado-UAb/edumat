@@ -11,10 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const analyticsResponse = document.getElementById('analytics-response');
     const analyticsListResponse = document.getElementById('analytics-list-response');
 
-    configBtn.addEventListener('click', async () => {
-        const response = await fetch('/configuracao-atividade');
-        const data = await response.json();
-        configResponse.textContent = JSON.stringify(data, null, 2);
+    configBtn.addEventListener('click', () => {
+        window.location.href = 'https://edumat7.onrender.com/configuracao-atividade';
     });
 
     jsonParamsBtn.addEventListener('click', async () => {
