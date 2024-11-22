@@ -13,9 +13,9 @@ data = {
     "analytics_list_url": "https://edumat7.onrender.com/lista-analytics-atividade"
 }
 
-@app.route("/")
-def home():
-    return "AP - EDUM@T7"
+@app.route('/')
+def index():
+    return render_template('index.html')
     
 @app.route('/configuracao-atividade', methods=['GET'])
 def get_config_url():
