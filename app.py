@@ -13,6 +13,10 @@ data = {
     "analytics_list_url": "http://<domínio>/lista-analytics-atividade"
 }
 
+@app.route("/")
+def home():
+    return "AP - EDUM@T7"
+    
 @app.route('/configuracao-atividade', methods=['GET'])
 def get_config_url():
     return jsonify({"config_url": data["config_url"]})
