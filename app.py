@@ -19,7 +19,7 @@ def index():
     
 @app.route('/configuracao-atividade', methods=['GET'])
 def get_config_url():
-    return jsonify({"config_url": data["config_url"]})
+    return jsonify({"config_url": data["https://edumat7.onrender.com/configuracao-atividade.html"]})
 
 @app.route('/json-params-atividade', methods=['GET'])
 def get_json_params_url():
@@ -31,11 +31,11 @@ def get_json_params_url():
 
 @app.route('/deploy-atividade', methods=['GET'])
 def get_user_url():
-    return jsonify({"user_url": data["user_url"]})
+    return jsonify({"user_url": data["https://edumat7.onrender.com/deploy-atividade"]})
 
 @app.route('/analytics-atividade', methods=['GET'])
 def get_analytics_url():
-    return jsonify({"analytics_url": data["analytics_url"]})
+    return jsonify({"analytics_url": data["https://edumat7.onrender.com/analytics-atividade"]})
 
 @app.route('/lista-analytics-atividade', methods=['POST'])
 def get_analytics_list_url():
