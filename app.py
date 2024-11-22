@@ -23,7 +23,11 @@ def get_config_url():
 
 @app.route('/json-params-atividade', methods=['GET'])
 def get_json_params_url():
-    return jsonify({"json_params_url": data["json_params_url"]})
+    params = [
+        {"name": "Equações do 1.º Grau a uma incógnita", "type": "text/plain"},
+        {"name": "Questão sobre equações do 1.º Grau a uma incógnita", "type": "text/plain"}
+    ]
+    return jsonify(params)
 
 @app.route('/deploy-atividade', methods=['GET'])
 def get_user_url():
