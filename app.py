@@ -34,6 +34,7 @@ def get_analytics_list_url():
     return jsonify({"analytics_list_url": data["analytics_list_url"]})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    #app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
 
 
