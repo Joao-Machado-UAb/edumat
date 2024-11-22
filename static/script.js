@@ -11,8 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const analyticsResponse = document.getElementById('analytics-response');
     const analyticsListResponse = document.getElementById('analytics-list-response');
 
-    const activityIdInput = document.getElementById('activity-id');
-
     configBtn.addEventListener('click', async () => {
         const response = await fetch('/configuracao-atividade');
         const data = await response.json();
@@ -26,8 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     deployBtn.addEventListener('click', async () => {
-        const activityId = activityIdInput.value;
-        const response = await fetch(`/deploy-atividade?activityID=${activityId}`);
+        const response = await fetch('/deploy-atividade');
         const data = await response.json();
         deployResponse.textContent = JSON.stringify(data, null, 2);
     });
