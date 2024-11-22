@@ -29,7 +29,7 @@ def get_json_params_url():
     ]
     return jsonify(params)
 
-@app.route('/deploy-atividade', methods=['GET'])
+@app.route('/deploy-atividade', methods=['POST'])
 def get_user_url():
     return jsonify({"user_url": data["user_url"]})
 
@@ -39,7 +39,20 @@ def get_analytics_url():
 
 @app.route('/lista-analytics-atividade', methods=['GET'])
 def get_analytics_list_url():
-    return jsonify({"analytics_list_url": data["analytics_list_url"]})
+    analytics = {
+        "qualAnalytics": [
+            {"name": "Acesso à atividade", "type": "boolean"},
+            {"name": "Download de recursos", "type": "boolean"},
+            {"name": "Upload de documentos", "type": "boolean"},
+            {"name": "Relatório das respostas concretamente dadas", "type": "text/plain"}
+        ],
+        "quantAnalytics": [
+            {"name": "Número de acessos", "type": "integer"},
+            {"name": "Download de recursos", "type": "integer"},
+            {"name": "Progresso na atividade (%)", "type": "integer"}
+        ]
+    }
+    return jsonify(analytics)
 
 if __name__ == '__main__':
     #app.run(debug=True)
