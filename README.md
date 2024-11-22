@@ -3,7 +3,9 @@
 edumat7/
 
 ├── app.py
-
 ├── requirements.txt
-
+├── templates/
+│   └── index.html
+├── static/
+│   └── script.js
 └── README.md
