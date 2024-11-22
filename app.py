@@ -37,7 +37,7 @@ def get_user_url():
 def get_analytics_url():
     return jsonify({"analytics_url": data["analytics_url"]})
 
-@app.route('/lista-analytics-atividade', methods=['GET'])
+@app.route('/lista-analytics-atividade', methods=['POST'])
 def get_analytics_list_url():
     analytics = {
         "qualAnalytics": [
