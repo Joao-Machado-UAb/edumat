@@ -71,33 +71,13 @@ def deploy():
     return jsonify({"url": f"https://edumat.onrender.com/atividade?id={activity_id}&student_id={student_id}"})
 
 # Analytics de atividade
-# Configuração do CORS
-@app.after_request
-def after_request(response):
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-    return response
-
-@app.route('/analytics-actividade', methods=['POST', 'OPTIONS'])
+@app.route('/provide_analytics', methods=['POST'])
 def provide_analytics():
-    # Tratamento da requisição OPTIONS para CORS
-    if request.method == 'OPTIONS':
-        return jsonify({}), 200
-        
-    try:
-        # Verifica se os dados são JSON
-        if not request.is_json:
-            return jsonify({"error": "Content-Type must be application/json"}), 400
-
+    if request.is_json:
         data = request.get_json()
         activity_id = data.get('activityID')
-        
-        if not activity_id:
-            return jsonify({"error": "activityID is required"}), 400
-
-        # Dados analíticos retornados
-        analytics_data = [
+        # Aqui você pode buscar os dados analíticos da atividade
+        return jsonify([
             {
                 "inveniraStdID": 1001,
                 "qualAnalytics": [
@@ -126,13 +106,9 @@ def provide_analytics():
                     {"name": "Progresso na atividade (%)", "value": 40.0}
                 ],
             }
-        ]
-
-        return jsonify(analytics_data)
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
+        ])
+    else:
+        return jsonify({"error": "Unsupported Media Type"}), 415
 
 if __name__ == '__main__':
     #app.run(debug=True)
