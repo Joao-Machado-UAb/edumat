@@ -1,7 +1,3 @@
-from flask import Flask, jsonify, request, send_from_directory
-
-app = Flask(__name__)
-
 @app.route('/')
 def index():
     return send_from_directory('.', 'index.html')
@@ -59,69 +55,42 @@ def deploy():
     return jsonify({"url": f"https://edumat.onrender.com/atividade?id={activity_id}&student_id={student_id}"})
 
 # Analytics de atividade
-from flask import Flask, jsonify, request
-
-app = Flask(__name__)
-
-# Adiciona CORS usando decorator do Flask
-@app.after_request
-def after_request(response):
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-    return response
-
 @app.route('/provide_analytics', methods=['POST'])
 def provide_analytics():
-    try:
-        # Verifica se os dados são JSON
-        if not request.is_json:
-            return jsonify({"error": "Content-Type must be application/json"}), 400
-
-        data = request.get_json()
+    data = request.get_json()
+    activity_id = data.get('activityID')
+    # Aqui você pode buscar os dados analíticos da atividade
+    return jsonify([
+        {
+            "inveniraStdID": 1001,
+            "qualAnalytics": [
+                {"name": "Acesso à atividade", "value": True},
+                {"name": "Download de recursos", "value": True},
+                {"name": "Upload de documentos", "value": True},
+                {"name": "Relatório das respostas concretamente dadas", "value": "Suficiente"}
+            ],
+            "quantAnalytics": [
+                {"name": "Número de acessos", "value": 50},
+                {"name": "Download de recursos", "value": 12},
+                {"name": "Progresso na atividade (%)", "value": 10.0}
+            ],
+        },
+        {
+            "inveniraStdID": 1002,
+            "qualAnalytics": [
+                {"name": "Acesso à atividade", "value": True},
+                {"name": "Download de recursos", "value": True},
+                {"name": "Upload de documentos", "value": True},
+                {"name": "Relatório das respostas concretamente dadas", "value": "Suficiente"}
+            ],
+            "quantAnalytics": [
+                {"name": "Número de acessos", "value": 60},
+                {"name": "Download de recursos", "value": 16},
+                {"name": "Progresso na atividade (%)", "value": 40.0}
+            ],
+        }
+    ])
         
-        # Verifica se activityID está presente
-        activity_id = data.get('activityID')
-        if not activity_id:
-            return jsonify({"error": "activityID is required"}), 400
-
-        # Seus dados analíticos
-        analytics_data = [
-            {
-                "inveniraStdID": 1001,
-                "qualAnalytics": [
-                    {"name": "Acesso à atividade", "value": True},
-                    {"name": "Download de recursos", "value": True},
-                    {"name": "Upload de documentos", "value": True},
-                    {"name": "Relatório das respostas concretamente dadas", "value": "Suficiente"}
-                ],
-                "quantAnalytics": [
-                    {"name": "Número de acessos", "value": 50},
-                    {"name": "Download de recursos", "value": 12},
-                    {"name": "Progresso na atividade (%)", "value": 10.0}
-                ],
-            },
-            {
-                "inveniraStdID": 1002,
-                "qualAnalytics": [
-                    {"name": "Acesso à atividade", "value": True},
-                    {"name": "Download de recursos", "value": True},
-                    {"name": "Upload de documentos", "value": True},
-                    {"name": "Relatório das respostas concretamente dadas", "value": "Suficiente"}
-                ],
-                "quantAnalytics": [
-                    {"name": "Número de acessos", "value": 60},
-                    {"name": "Download de recursos", "value": 16},
-                    {"name": "Progresso na atividade (%)", "value": 40.0}
-                ],
-            }
-        ]
-
-        return jsonify(analytics_data)
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-       
 if __name__ == '__main__':
     #app.run(debug=True)
     app.run(host="0.0.0.0", port=5000)
