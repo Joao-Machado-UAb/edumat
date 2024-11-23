@@ -59,7 +59,7 @@ def deploy():
     return jsonify({"url": f"https://edumat.onrender.com/atividade?id={activity_id}&student_id={student_id}"})
 
 # Analytics de atividade
-@app.route('/provide_analytics', methods=['GET'])
+@app.route('/provide_analytics', methods=['POST'])
 def provide_analytics():
     data = request.get_json()
     activity_id = data.get('activityID')
