@@ -1,10 +1,5 @@
 from flask import Flask, jsonify, request, send_from_directory
 
-from flask_cors import CORS  # Para permitir requisições cross-origin
-
-app = Flask(__name__)
-CORS(app)  # Habilita CORS para todas as rotas
-
 app = Flask(__name__)
 
 @app.route('/')
