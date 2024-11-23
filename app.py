@@ -11,19 +11,29 @@ def index():
 def config():
     return '''
     <form>
-        <label for="activity_name">Nome da Atividade:</label><br>
-        <input type="text" id="activity_name" name="activity_name"><br>
-        <label for="question">Questão:</label><br>
-        <input type="text" id="question" name="question"><br>
+        <label for="resumo">Resumo da dos Conteúdos de Equações de 7.º ano:</label><br>
+        <input type="text" id="resumo" name="resumo"><br>
+        <label for="instrucoes">URL para o resumo:</label><br>
+        <input type="text" id="instrucoes" name="instrucoes"><br>
+        <input type="hidden" id="hidden_resumo" name="hidden_resumo">
+        <input type="hidden" id="hidden_instrucoes" name="hidden_instrucoes">
         <input type="submit" value="Submit">
     </form>
+    <script>
+        document.querySelector('form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            document.getElementById('hidden_resumo').value = document.getElementById('resumo').value;
+            document.getElementById('hidden_instrucoes').value = document.getElementById('instrucoes').value;
+            alert('Configuração salva com sucesso!');
+        });
+    </script>
     '''
 
 @app.route('/json_params', methods=['GET'])
 def json_params():
     return jsonify([
-        {"name": "Equações do 1.º Grau a uma incógnita", "type": "text/plain"},
-        {"name": "Questão sobre equações do 1.º Grau a uma incógnita", "type": "text/plain"}
+        {"name": "resumo", "type": "text/plain"},
+        {"name": "instrucoes", "type": "text/plain"}
     ])
 
 # Lista de analytics da atividade
