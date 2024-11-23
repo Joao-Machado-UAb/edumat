@@ -47,7 +47,7 @@ def analytics_list():
 @app.route('/user_url', methods=['GET'])
 def user_url():
     activity_id = request.args.get('activityID')
-    return jsonify({"url": f"http://<domínio>/atividade?id={activity_id}"})
+    return jsonify({"url": f"http://edumatedumat.onrender.com/atividade?id={activity_id}"})
 
 @app.route('/deploy', methods=['POST'])
 def deploy():
@@ -56,7 +56,7 @@ def deploy():
     student_id = data.get('Inven!RAstdID')
     json_params = data.get('json_params')
     # Aqui você pode armazenar os dados necessários para a atividade
-    return jsonify({"url": f"http://<domínio>/atividade?id={activity_id}&student_id={student_id}"})
+    return jsonify({"url": f"http://edumatedumat.onrender.com/atividade?id={activity_id}&student_id={student_id}"})
 
 # Analytics de atividade
 @app.route('/provide_analytics', methods=['POST'])
