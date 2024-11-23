@@ -59,38 +59,38 @@ def deploy():
     return jsonify({"url": f"https://edumat.onrender.com/atividade?id={activity_id}&student_id={student_id}"})
 
 # Analytics de atividade
-@app.route('/provide_analytics', methods=['GET'])
+@app.route('/provide_analytics', methods=['POST'])
 def provide_analytics():
     data = request.get_json()
     activity_id = data.get('activityID')
     # Aqui você pode buscar os dados analíticos da atividade
     return jsonify([
         {
-            inveniraStdID 1001,
-            qualAnalytics [
-                {name Acesso à atividade, value True},
-                {name Download de recursos, value True},
-                {name Upload de documentos, value True},
-                {name Relatório das respostas concretamente dadas, value Suficiente}
+            "inveniraStdID": 1001,
+            "qualAnalytics": [
+                {"name": "Acesso à atividade", "value": True},
+                {"name": "Download de recursos", "value": True},
+                {"name": "Upload de documentos", "value": True},
+                {"name": "Relatório das respostas concretamente dadas", "value": "Suficiente"}
             ],
-            quantAnalytics [
-                {name Número de acessos, value 50},
-                {name Download de recursos, value 12},
-                {name Progresso na atividade (%), value 10.0}
+            "quantAnalytics": [
+                {"name": "Número de acessos", "value": 50},
+                {"name": "Download de recursos", "value": 12},
+                {"name": "Progresso na atividade (%)", "value": 10.0}
             ],
         },
         {
-            inveniraStdID 1002,
-            qualAnalytics [
-                {name Acesso à atividade, value True},
-                {name Download de recursos, value True},
-                {name Upload de documentos, value True},
-                {name Relatório das respostas concretamente dadas, value Suficiente}
+            "inveniraStdID": 1002,
+            "qualAnalytics": [
+                {"name": "Acesso à atividade", "value": True},
+                {"name": "Download de recursos", "value": True},
+                {"name": "Upload de documentos", "value": True},
+                {"name": "Relatório das respostas concretamente dadas", "value": "Suficiente"}
             ],
-            quantAnalytics [
-                {name Número de acessos, value 60},
-                {name Download de recursos, value 16},
-                {name Progresso na atividade (%), value 40.0}
+            "quantAnalytics": [
+                {"name": "Número de acessos", "value": 60},
+                {"name": "Download de recursos", "value": 16},
+                {"name": "Progresso na atividade (%)", "value": 40.0}
             ],
         }
     ])
