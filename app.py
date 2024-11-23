@@ -2,11 +2,6 @@ from flask import Flask, jsonify, request, send_from_directory
 
 app = Flask(__name__)
 
-#Verifique o método permitido pelo endpoint: para tirar
-@app.route('/api', methods=['POST']) # Certifique-se de listar os métodos aceitos
-def api_endpoint():
-return "Endpoint acessado via POST", 200
-
 @app.route('/')
 def index():
     return send_from_directory('.', 'index.html')
