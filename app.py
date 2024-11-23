@@ -64,6 +64,18 @@ def deploy():
     return jsonify({"url": f"https://edumat.onrender.com/atividade?id={activity_id}&student_id={student_id}"})
 
 # Analytics de atividade
+from flask import Flask, jsonify, request
+
+app = Flask(__name__)
+
+# Adiciona CORS usando decorator do Flask
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    return response
+
 @app.route('/provide_analytics', methods=['POST'])
 def provide_analytics():
     try:
@@ -115,8 +127,8 @@ def provide_analytics():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Adiciona uma rota de teste GET para verificar se o servidor está funcionando
-@app.route('/test', methods=['GET'])
+# Rota de teste
+@app.route('/', methods=['GET'])
 def test():
     return jsonify({"message": "Server is running!"})
         
