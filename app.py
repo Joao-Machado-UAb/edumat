@@ -1,4 +1,6 @@
 from flask import Flask, jsonify, request, send_from_directory
+import requests
+import json
 
 app = Flask(__name__)
 
@@ -74,45 +76,28 @@ def deploy():
 # Analytics de atividade
 @app.route('/provide_analytics', methods=['POST'])
 def provide_analytics():
-    data = request.get_json()
-    activity_id = data.get('activityID')
-    student_id = data.get('Inven!RAstdID')
-    json_params = data.get('json_params')
-    if not activity_id or not student_id:
-        return jsonify({"error": "activityID and Inven!RAstdID are required"}), 400
-    # Identificar a instância em causa
-    return jsonify([
-        {
-            "inveniraStdID": 1001,
-            "qualAnalytics": [
-                {"name": "Acesso à atividade", "value": True},
-                {"name": "Download de recursos", "value": True},
-                {"name": "Upload de documentos", "value": True},
-                {"name": "Relatório das respostas concretamente dadas", "value": "Suficiente"}
-            ],
-            "quantAnalytics": [
-                {"name": "Número de acessos", "value": 50},
-                {"name": "Download de recursos", "value": 12},
-                {"name": "Progresso na atividade (%)", "value": 10.0}
-            ],
-        },
-        {
-            "inveniraStdID": 1002,
-            "qualAnalytics": [
-                {"name": "Acesso à atividade", "value": True},
-                {"name": "Download de recursos", "value": True},
-                {"name": "Upload de documentos", "value": True},
-                {"name": "Relatório das respostas concretamente dadas", "value": "Suficiente"}
-            ],
-            "quantAnalytics": [
-                {"name": "Número de acessos", "value": 60},
-                {"name": "Download de recursos", "value": 16},
-                {"name": "Progresso na atividade (%)", "value": 40.0}
-            ],
+    # URL do serviço analytics
+    analytics_url = 'https://https://edumat.onrender.com/provide_analytics'
+    
+    # Dados a serem enviados no corpo da requisição
+    data = {
+        "activityID": "Este texto é o identificador da instância da atividade na Inven!RA"
         }
-    ])
+    
+    # Fazer a requisição POST
+    response = requests.post(analytics_url, json=data)
+    
+    # Verificar se a requisição foi bem-sucedida
+    if response.status_code == 200:
+        # Converter a resposta para JSON
+        analytics_data = response.json()
+        
+        # Exibir a resposta
+        print(json.dumps(analytics_data, indent=4))
+    else:
+        print(f"Falha na requisição: {response.status_code}")
+        print(response.text)
 
 if __name__ == '__main__':
     #app.run(debug=True)
     app.run(host="0.0.0.0", port=5000)
-
