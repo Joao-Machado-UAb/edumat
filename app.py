@@ -102,7 +102,7 @@ def activity():
 
 # Analytics atividade - Segunda Etapa
 @app.route("/analytics", methods=["POST"])
-def deploy():
+def analytics():
     data = request.get_json()
     activity_id = data.get("activityID")
     student_id = data.get("Inven!RAstdID")
