@@ -74,7 +74,7 @@ def deploy():
 # Analytics de atividade
 @app.route('/analytics', methods=['POST'])
 def analytics():
-        analytics_data = [
+    analytics_data = [
         {
             "inveniraStdID": 1001,
             "quantAnalytics": [
@@ -93,6 +93,7 @@ def analytics():
             ],
         }
     ]
+    return jsonify(analytics_data)
 
 if __name__ == '__main__':
     #app.run(debug=True)
