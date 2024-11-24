@@ -92,10 +92,14 @@ def deploy():
 @app.route("/activity", methods=["GET"])
 def activity():
     activity_id = request.args.get("activityID")
+    if not activity_id:
+        return jsonify({"error": "activityID é obrigatório"}), 400
+
     # Aqui você pode armazenar o activity_id e preparar a atividade
     return jsonify(
         {
-            "activityID": f"Este texto é o identificador da instância da atividade na Inven!RA"
+            "activityID": activity_id,
+            "message": "Este é o identificador da instância da atividade na Inven!RA",
         }
     )
 
@@ -104,49 +108,41 @@ def activity():
 @app.route("/analytics", methods=["POST"])
 def analytics():
     data = request.get_json()
-    activity_id = data.get("activityID")
-    student_id = data.get("Inven!RAstdID")
-    json_params = data.get("json_params")
-    # Aqui você pode armazenar os dados necessários para a atividade
-    return jsonify(
-        [
-            {
-                "inveniraStdID": 1001,
-                "qualAnalytics": [
-                    {"name": "Acesso à atividade", "value": True},
-                    {"name": "Download de recursos", "value": True},
-                    {"name": "Upload de documentos", "value": True},
-                    {
-                        "name": "Relatório das respostas concretamente dadas",
-                        "value": "Suficiente",
-                    },
-                ],
-                "quantAnalytics": [
-                    {"name": "Número de acessos", "value": 50},
-                    {"name": "Download de recursos", "value": 12},
-                    {"name": "Progresso na atividade (%)", "value": 10.0},
-                ],
-            },
-            {
-                "inveniraStdID": 1002,
-                "qualAnalytics": [
-                    {"name": "Acesso à atividade", "value": True},
-                    {"name": "Download de recursos", "value": True},
-                    {"name": "Upload de documentos", "value": True},
-                    {
-                        "name": "Relatório das respostas concretamente dadas",
-                        "value": "Suficiente",
-                    },
-                ],
-                "quantAnalytics": [
-                    {"name": "Número de acessos", "value": 60},
-                    {"name": "Download de recursos", "value": 16},
-                    {"name": "Progresso na atividade (%)", "value": 40.0},
-                ],
-            },
-        ]
-    )
 
+    if not data:
+        return jsonify({"error": "JSON inválido ou ausente"}), 400
+
+    activity_id = data.get("activityID")
+    student_id = data.get("inveniraStdID")  # Corrigir nome inconsistente
+    json_params = data.get("json_params")
+
+    # Validações
+    if not activity_id or not student_id:
+        return jsonify({"error": "activityID e inveniraStdID são obrigatórios"}), 400
+
+    # Dados analíticos simulados
+    analytics_response = {
+        "inveniraStdID": student_id,
+        "activityID": activity_id,
+        "qualAnalytics": [
+            {"name": "Acesso à atividade", "value": True},
+            {
+                "name": "Download de recursos",
+                "value": json_params.get("downloaded", True) if json_params else True,
+            },
+            {"name": "Upload de documentos", "value": True},
+            {
+                "name": "Relatório das respostas concretamente dadas",
+                "value": "Suficiente",
+            },
+        ],
+        "quantAnalytics": [
+            {"name": "Número de acessos", "value": 50},
+            {"name": "Download de recursos", "value": 12},
+            {"name": "Progresso na atividade (%)", "value": 10.0},
+        ],
+    }
+    return jsonify(analytics_response)
 
 if __name__ == "__main__":
     # app.run(debug=True)
