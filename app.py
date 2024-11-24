@@ -1,4 +1,6 @@
 from flask import Flask, jsonify, request, send_from_directory
+from typing import Dict, List, Optional
+import json
 
 app = Flask(__name__)
 
@@ -72,45 +74,82 @@ def deploy():
 
 
 # Analytics de atividade
-@app.route('/provide_analytics', methods=['POST'])
-def provide_analytics():
-    data = request.get_json()
-    activity_id = data.get('activityID')
-    student_id = data.get('Inven!RAstdID')
-    json_params = data.get('json_params')
-    if not activity_id or not student_id:
-        return jsonify({"error": "activityID and Inven!RAstdID are required"}), 400
-    # Identificar a instância em causa
-    return jsonify([
+# Simulação de um banco de dados de analytics
+analytics_db: Dict[str, List[Dict]] = {
+    "activity123": [
         {
             "inveniraStdID": 1001,
-            "qualAnalytics": [
-                {"name": "Acesso à atividade", "value": True},
-                {"name": "Download de recursos", "value": True},
-                {"name": "Upload de documentos", "value": True},
-                {"name": "Relatório das respostas concretamente dadas", "value": "Suficiente"}
-            ],
             "quantAnalytics": [
-                {"name": "Número de acessos", "value": 50},
-                {"name": "Download de recursos", "value": 12},
-                {"name": "Progresso na atividade (%)", "value": 10.0}
+                {"name": "Acedeu à atividade", "value": True},
+                {"name": "Download documento 1", "value": True},
+                {"name": "Evolução pela atividade (%)", "value": "33.3"},
+            ],
+            "qualAnalytics": [
+                {
+                    "Student activity profile": "https://ActivityProvider/?APAnID=11111111"
+                },
+                {"Actitivy Heat Map": "https://ActivityProvider/?APAnID=21111111"},
             ],
         },
         {
             "inveniraStdID": 1002,
-            "qualAnalytics": [
-                {"name": "Acesso à atividade", "value": True},
-                {"name": "Download de recursos", "value": True},
-                {"name": "Upload de documentos", "value": True},
-                {"name": "Relatório das respostas concretamente dadas", "value": "Suficiente"}
-            ],
             "quantAnalytics": [
-                {"name": "Número de acessos", "value": 60},
-                {"name": "Download de recursos", "value": 16},
-                {"name": "Progresso na atividade (%)", "value": 40.0}
+                {"name": "Acedeu à atividade", "value": True},
+                {"name": "Download documento 1", "value": False},
+                {"name": "Evolução pela atividade (%)", "value": "10.0"},
             ],
-        }
-    ])
+            "qualAnalytics": [
+                {
+                    "Student activity profile": "https://ActivityProvider/?APAnID=11111112"
+                },
+                {"Actitivy Heat Map": "https://ActivityProvider/?APAnID=21111112"},
+            ],
+        },
+    ]
+}
+
+
+def get_activity_analytics(activity_id: str) -> Optional[List[Dict]]:
+    """
+    Recupera os dados analíticos de uma atividade específica.
+    """
+    return analytics_db.get(activity_id)
+
+
+@app.route("/analytics", methods=["POST"])
+def handle_analytics_request():
+    """
+    Endpoint para processar pedidos de analytics de atividades.
+    Espera receber um JSON com o formato: {"activityID": "string"}
+    """
+    try:
+        request_data = request.get_json()
+
+        if not request_data or "activityID" not in request_data:
+            return (
+                jsonify(
+                    {"error": "Pedido inválido. É necessário fornecer um activityID."}
+                ),
+                400,
+            )
+
+        activity_id = request_data["activityID"]
+        analytics_data = get_activity_analytics(activity_id)
+
+        if analytics_data is None:
+            return (
+                jsonify(
+                    {
+                        "error": f"Não foram encontrados dados para a atividade {activity_id}"
+                    }
+                ),
+                404,
+            )
+
+        return jsonify(analytics_data)
+
+    except Exception as e:
+        return jsonify({"error": f"Erro ao processar o pedido: {str(e)}"}), 500
 
 if __name__ == '__main__':
     #app.run(debug=True)
