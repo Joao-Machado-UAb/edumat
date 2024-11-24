@@ -116,7 +116,7 @@ def get_activity_analytics(activity_id: str) -> Optional[List[Dict]]:
     return analytics_db.get(activity_id)
 
 
-@app.route("/analytics", methods=["POST"])
+@app.route("/", methods=["POST"])  # Mudamos a rota para a raiz '/'
 def handle_analytics_request():
     """
     Endpoint para processar pedidos de analytics de atividades.
@@ -151,6 +151,7 @@ def handle_analytics_request():
     except Exception as e:
         return jsonify({"error": f"Erro ao processar o pedido: {str(e)}"}), 500
 
+
 if __name__ == '__main__':
     #app.run(debug=True)
-    app.run(host="0.0.0.0", port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5000)
