@@ -70,73 +70,41 @@ def deploy():
     # Aqui você pode armazenar os dados necessários para a atividade
     return jsonify({"url": f"https://edumat.onrender.com/atividade?id={activity_id}&student_id={student_id}"})
 
-
 # Analytics de atividade
-# Simulação de um banco de dados de analytics
-analytics_db: Dict[str, List[Dict]] = {
-    "This string is the Inven!RA activity ID": [  # Mudamos a chave para corresponder ao exemplo
+# Analytics de atividade - Primeira Etapa
+@app.route("/user_url", methods=["GET"])
+def user_url():
+    activity_id = request.args.get("activityID")
+    # Aqui você pode armazenar o activity_id e preparar a atividade
+    return jsonify({"url": f"https://edumat.onrender.com/atividade?id={activity_id}"})
+
+
+# Deploy da atividade - Segunda Etapa
+@app.route("/analytics", methods=["POST"])
+def deploy():
+    data = request.get_json()
+    activity_id = data.get("activityID")
+    student_id = data.get("Inven!RAstdID")
+    json_params = data.get("json_params")
+    # Aqui você pode armazenar os dados necessários para a atividade
+    return jsonify(
         {
-            "inveniraStdID": 1001,
-            "quantAnalytics": [
-                {"name": "Acedeu à atividade", "value": True},
-                {"name": "Download documento 1", "value": True},
-                {"name": "Evolução pela atividade (%)", "value": "33.3"},
-            ],
             "qualAnalytics": [
+                {"name": "Acesso à atividade", "type": "boolean"},
+                {"name": "Download de recursos", "type": "boolean"},
+                {"name": "Upload de documentos", "type": "boolean"},
                 {
-                    "Student activity profile": "https://ActivityProvider/?APAnID=11111111"
+                    "name": "Relatório das respostas concretamente dadas",
+                    "type": "text/plain",
                 },
-                {"Actitivy Heat Map": "https://ActivityProvider/?APAnID=21111111"},
             ],
-        },
-        {
-            "inveniraStdID": 1002,
             "quantAnalytics": [
-                {"name": "Acedeu à atividade", "value": True},
-                {"name": "Download documento 1", "value": False},
-                {"name": "Evolução pela atividade (%)", "value": "10.0"},
+                {"name": "Número de acessos", "type": "integer"},
+                {"name": "Download de recursos", "type": "integer"},
+                {"name": "Progresso na atividade (%)", "type": "integer"},
             ],
-            "qualAnalytics": [
-                {
-                    "Student activity profile": "https://ActivityProvider/?APAnID=11111112"
-                },
-                {"Actitivy Heat Map": "https://ActivityProvider/?APAnID=21111112"},
-            ],
-        },
-    ]
-}
-
-
-@app.route("/analytics", methods=["POST"])  # Rota mais específica
-def handle_analytics_request():
-    """
-    Endpoint para processar pedidos de analytics de atividades.
-    """
-    if not request.is_json:
-        return jsonify({"error": "Content-Type deve ser application/json"}), 400
-
-    try:
-        data = request.get_json()
-
-        if not data or "activityID" not in data:
-            return jsonify({"error": "activityID é obrigatório"}), 400
-
-        activity_id = data["activityID"]
-        analytics = analytics_db.get(activity_id)
-
-        if not analytics:
-            return jsonify({"error": f"Atividade {activity_id} não encontrada"}), 404
-
-        return jsonify(analytics)
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-# Rota de teste para verificar se o servidor está funcionando
-@app.route("/test", methods=["GET"])
-def test():
-    return jsonify({"status": "API está funcionando"}), 200
+        }
+    )
 
 
 if __name__ == "__main__":
