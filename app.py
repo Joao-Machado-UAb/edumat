@@ -74,29 +74,30 @@ def deploy():
 
 
 # Analytics de atividade
-@app.route('/provide_analytics', methods=['POST'])
+@app.route("/provide_analytics", methods=["POST"])
 def provide_analytics():
     # URL do serviço analytics
-    analytics_url = 'https://https://edumat.onrender.com/provide_analytics'
-    
+    analytics_url = "https://https://edumat.onrender.com/provide_analytics"
+
     # Dados a serem enviados no corpo da requisição
     data = {
         "activityID": "Este texto é o identificador da instância da atividade na Inven!RA"
-        }
-    
+    }
+
     # Fazer a requisição POST
     response = requests.post(analytics_url, json=data)
-    
+
     # Verificar se a requisição foi bem-sucedida
     if response.status_code == 200:
         # Converter a resposta para JSON
         analytics_data = response.json()
-        
+
         # Exibir a resposta
         print(json.dumps(analytics_data, indent=4))
     else:
         print(f"Falha na requisição: {response.status_code}")
         print(response.text)
+
 
 if __name__ == '__main__':
     #app.run(debug=True)
