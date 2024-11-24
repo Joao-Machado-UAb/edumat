@@ -1,6 +1,4 @@
 from flask import Flask, jsonify, request, send_from_directory
-import requests
-import json
 
 app = Flask(__name__)
 
@@ -73,14 +71,46 @@ def deploy():
     return jsonify({"url": f"https://edumat.onrender.com/atividade?id={activity_id}&student_id={student_id}"})
 
 
-@app.route("/provide_analytics", methods=["POST"])
+# Analytics de atividade
+@app.route('/provide_analytics', methods=['POST'])
 def provide_analytics():
-    data = request.json
-    # Processar os dados e retornar a resposta
-    return jsonify({"message": "Dados recebidos com sucesso", "data": data})
-
-if __name__ == "__main__":
-    app.run(debug=True)
+    data = request.get_json()
+    activity_id = data.get('activityID')
+    student_id = data.get('Inven!RAstdID')
+    json_params = data.get('json_params')
+    if not activity_id or not student_id:
+        return jsonify({"error": "activityID and Inven!RAstdID are required"}), 400
+    # Identificar a instância em causa
+    return jsonify([
+        {
+            "inveniraStdID": 1001,
+            "qualAnalytics": [
+                {"name": "Acesso à atividade", "value": True},
+                {"name": "Download de recursos", "value": True},
+                {"name": "Upload de documentos", "value": True},
+                {"name": "Relatório das respostas concretamente dadas", "value": "Suficiente"}
+            ],
+            "quantAnalytics": [
+                {"name": "Número de acessos", "value": 50},
+                {"name": "Download de recursos", "value": 12},
+                {"name": "Progresso na atividade (%)", "value": 10.0}
+            ],
+        },
+        {
+            "inveniraStdID": 1002,
+            "qualAnalytics": [
+                {"name": "Acesso à atividade", "value": True},
+                {"name": "Download de recursos", "value": True},
+                {"name": "Upload de documentos", "value": True},
+                {"name": "Relatório das respostas concretamente dadas", "value": "Suficiente"}
+            ],
+            "quantAnalytics": [
+                {"name": "Número de acessos", "value": 60},
+                {"name": "Download de recursos", "value": 16},
+                {"name": "Progresso na atividade (%)", "value": 40.0}
+            ],
+        }
+    ])
 
 if __name__ == '__main__':
     #app.run(debug=True)
