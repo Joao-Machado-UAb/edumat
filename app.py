@@ -77,7 +77,7 @@ def deploy():
 @app.route("/provide_analytics", methods=["POST"])
 def provide_analytics():
     # URL do serviço analytics
-    analytics_url = "https://https://edumat.onrender.com/provide_analytics"
+    analytics_url = "https://edumat.onrender.com/provide_analytics"
 
     # Dados a serem enviados no corpo da requisição
     data = {
