@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, send_from_directory
+import logging
 
 app = Flask(__name__)
 
@@ -70,45 +71,31 @@ def deploy():
     # Aqui você pode armazenar os dados necessários para a atividade
     return jsonify({"url": f"https://edumat.onrender.com/atividade?id={activity_id}&student_id={student_id}"})
 
+# Configuração de logging
+logging.basicConfig(level=logging.INFO)
+
 # Analytics de atividade
 @app.route('/provide_analytics', methods=['POST'])
 def provide_analytics():
-    if request.is_json:
+    try:
         data = request.get_json()
+        if not data:
+            return jsonify({"error": "Invalid input"}), 400
+
         activity_id = data.get('activityID')
-        # Aqui você pode buscar os dados analíticos da atividade
-        return jsonify([
-            {
-                "inveniraStdID": 1001,
-                "qualAnalytics": [
-                    {"name": "Acesso à atividade", "value": True},
-                    {"name": "Download de recursos", "value": True},
-                    {"name": "Upload de documentos", "value": True},
-                    {"name": "Relatório das respostas concretamente dadas", "value": "Suficiente"}
-                ],
-                "quantAnalytics": [
-                    {"name": "Número de acessos", "value": 50},
-                    {"name": "Download de recursos", "value": 12},
-                    {"name": "Progresso na atividade (%)", "value": 10.0}
-                ],
-            },
-            {
-                "inveniraStdID": 1002,
-                "qualAnalytics": [
-                    {"name": "Acesso à atividade", "value": True},
-                    {"name": "Download de recursos", "value": True},
-                    {"name": "Upload de documentos", "value": True},
-                    {"name": "Relatório das respostas concretamente dadas", "value": "Suficiente"}
-                ],
-                "quantAnalytics": [
-                    {"name": "Número de acessos", "value": 60},
-                    {"name": "Download de recursos", "value": 16},
-                    {"name": "Progresso na atividade (%)", "value": 40.0}
-                ],
-            }
-        ])
-    else:
-        return jsonify({"error": "Unsupported Media Type"}), 415
+        json_params = data.get('json_params')
+
+        if not activity_id:
+            return jsonify({"error": "activityID is required"}), 400
+
+        # Aqui você pode armazenar os dados necessários para a atividade
+        logging.info(f"Received analytics request for activityID: {activity_id}")
+
+        return jsonify({"url": f"https://edumat.onrender.com/atividade?id={activity_id}"})
+
+    except Exception as e:
+        logging.error(f"Error processing analytics request: {e}")
+        return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == '__main__':
     #app.run(debug=True)
