@@ -73,7 +73,7 @@ def deploy():
 
 # Analytics de atividade
 @app.route('/provide_analytics', methods=['POST'])
-def deploy():
+def provide_analytics():
     data = request.get_json()
     activity_id = data.get('activityID')
     student_id = data.get('Inven!RAstdID')
