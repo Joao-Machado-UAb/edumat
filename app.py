@@ -1,5 +1,9 @@
 from flask import Flask, jsonify, request, send_from_directory
 import logging
+import json
+import requests
+from functools import wraps
+from typing import Dict, Any, Optiona
 
 app = Flask(__name__)
 
@@ -75,27 +79,111 @@ def deploy():
 logging.basicConfig(level=logging.INFO)
 
 # Analytics de atividade
+# Configuração de logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+def handle_errors(f):
+    """Decorator para tratamento padronizado de erros"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        try:
+            return f(*args, **kwargs)
+        except Exception as e:
+            logger.error(f"Error in endpoint: {str(e)}")
+            return jsonify({"error": "Internal server error"}), 500
+    return decorated_function
+
+def validate_request(data: Dict[str, Any]) -> Optional[tuple]:
+    """Valida os dados da requisição"""
+    if not data:
+        return jsonify({"error": "Invalid input"}), 400
+    if 'activityID' not in data:
+        return jsonify({"error": "activityID is required"}), 400
+    return None
+
+@app.route('/configuracao-actividade', methods=['GET'])
+@handle_errors
+def get_configuracao():
+    return jsonify({
+        "status": "success",
+        "config": {
+            "version": "1.0",
+            "settings": {}
+        }
+    })
+
+@app.route('/json-params', methods=['GET'])
+@handle_errors
+def get_json_params():
+    return jsonify({
+        "params": {
+            "resumo": "Descrição técnica da questão.",
+            "role": "Software Engineer",
+            "nivel": "Professional"
+        }
+    })
+
+@app.route('/deploy-actividade/<activity_id>', methods=['GET'])
+@handle_errors
+def deploy_actividade(activity_id):
+    return jsonify({
+        "status": "deployed",
+        "activityID": activity_id
+    })
+
+@app.route('/actividade/<activity_id>', methods=['POST'])
+@handle_errors
+def configure_actividade(activity_id):
+    data = request.get_json()
+    error_response = validate_request(data)
+    if error_response:
+        return error_response
+    
+    logger.info(f"Configuring activity: {activity_id}")
+    return jsonify({
+        "status": "configured",
+        "activityID": activity_id,
+        "config": data
+    })
+
 @app.route('/provide_analytics', methods=['POST'])
+@handle_errors
 def provide_analytics():
-    try:
-        data = request.get_json()
-        if not data:
-            return jsonify({"error": "Invalid input"}), 400
+    data = request.get_json()
+    error_response = validate_request(data)
+    if error_response:
+        return error_response
+    
+    activity_id = data['activityID']
+    json_params = data.get('json_params', {})
+    
+    logger.info(f"Received analytics request for activityID: {activity_id}")
+    return jsonify({
+        "url": f"https://edumat.onrender.com/atividade?id={activity_id}"
+    })
 
-        activity_id = data.get('activityID')
-        json_params = data.get('json_params')
+@app.route('/lista-analytics-actividade', methods=['GET'])
+@handle_errors
+def get_analytics_list():
+    return jsonify({
+        "analytics": [
+            {
+                "activityID": "123",
+                "timestamp": "2024-03-24T10:00:00Z",
+                "data": {}
+            }
+        ]
+    })
 
-        if not activity_id:
-            return jsonify({"error": "activityID is required"}), 400
-
-        # Aqui você pode armazenar os dados necessários para a atividade
-        logging.info(f"Received analytics request for activityID: {activity_id}")
-
-        return jsonify({"url": f"https://edumat.onrender.com/atividade?id={activity_id}"})
-
-    except Exception as e:
-        logging.error(f"Error processing analytics request: {e}")
-        return jsonify({"error": "Internal server error"}), 500
+@app.route('/processo/<activity_id>', methods=['GET'])
+@handle_errors
+def get_processo(activity_id):
+    return jsonify({
+        "status": "in_progress",
+        "activityID": activity_id,
+        "progress": 75
+    })
 
 if __name__ == '__main__':
     #app.run(debug=True)
