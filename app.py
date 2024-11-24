@@ -74,12 +74,12 @@ def deploy():
 # Analytics de atividade
 @app.route('/provide_analytics', methods=['POST'])
 def provide_analytics():
-    data = request.get_json()
-    activity_id = data.get('activityID')
-    student_id = data.get('Inven!RAstdID')
-    json_params = data.get('json_params')
-    if not activity_id or not student_id:
-        return jsonify({"error": "activityID and Inven!RAstdID are required"}), 400
+    #data = request.get_json()
+    #activity_id = data.get('activityID')
+    #student_id = data.get('Inven!RAstdID')
+    #json_params = data.get('json_params')
+    #if not activity_id or not student_id:
+    #    return jsonify({"error": "activityID and Inven!RAstdID are required"}), 400
     # Identificar a instância em causa
     return jsonify([
         {
