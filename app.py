@@ -1,6 +1,4 @@
 from flask import Flask, jsonify, request, send_from_directory
-from typing import Dict, List, Optional
-import json
 
 app = Flask(__name__)
 
@@ -74,73 +72,47 @@ def deploy():
 
 
 # Analytics de atividade
-# Simulação de um banco de dados de analytics
-analytics_db: Dict[str, List[Dict]] = {
-    "This string is the Inven!RA activity ID": [  # Mudamos a chave para corresponder ao exemplo
+@app.route('/provide_analytics', methods=['POST'])
+def provide_analytics():
+    data = request.get_json()
+    activity_id = data.get('activityID')
+    student_id = data.get('Inven!RAstdID')
+    json_params = data.get('json_params')
+    if not activity_id or not student_id:
+        return jsonify({"error": "activityID and Inven!RAstdID are required"}), 400
+    # Identificar a instância em causa
+    return jsonify([
         {
             "inveniraStdID": 1001,
-            "quantAnalytics": [
-                {"name": "Acedeu à atividade", "value": True},
-                {"name": "Download documento 1", "value": True},
-                {"name": "Evolução pela atividade (%)", "value": "33.3"},
-            ],
             "qualAnalytics": [
-                {
-                    "Student activity profile": "https://ActivityProvider/?APAnID=11111111"
-                },
-                {"Actitivy Heat Map": "https://ActivityProvider/?APAnID=21111111"},
+                {"name": "Acesso à atividade", "value": True},
+                {"name": "Download de recursos", "value": True},
+                {"name": "Upload de documentos", "value": True},
+                {"name": "Relatório das respostas concretamente dadas", "value": "Suficiente"}
+            ],
+            "quantAnalytics": [
+                {"name": "Número de acessos", "value": 50},
+                {"name": "Download de recursos", "value": 12},
+                {"name": "Progresso na atividade (%)", "value": 10.0}
             ],
         },
         {
             "inveniraStdID": 1002,
-            "quantAnalytics": [
-                {"name": "Acedeu à atividade", "value": True},
-                {"name": "Download documento 1", "value": False},
-                {"name": "Evolução pela atividade (%)", "value": "10.0"},
-            ],
             "qualAnalytics": [
-                {
-                    "Student activity profile": "https://ActivityProvider/?APAnID=11111112"
-                },
-                {"Actitivy Heat Map": "https://ActivityProvider/?APAnID=21111112"},
+                {"name": "Acesso à atividade", "value": True},
+                {"name": "Download de recursos", "value": True},
+                {"name": "Upload de documentos", "value": True},
+                {"name": "Relatório das respostas concretamente dadas", "value": "Suficiente"}
             ],
-        },
-    ]
-}
+            "quantAnalytics": [
+                {"name": "Número de acessos", "value": 60},
+                {"name": "Download de recursos", "value": 16},
+                {"name": "Progresso na atividade (%)", "value": 40.0}
+            ],
+        }
+    ])
 
-
-@app.route("/api/analytics", methods=["POST"])  # Rota mais específica
-def handle_analytics_request():
-    """
-    Endpoint para processar pedidos de analytics de atividades.
-    """
-    if not request.is_json:
-        return jsonify({"error": "Content-Type deve ser application/json"}), 400
-
-    try:
-        data = request.get_json()
-
-        if not data or "activityID" not in data:
-            return jsonify({"error": "activityID é obrigatório"}), 400
-
-        activity_id = data["activityID"]
-        analytics = analytics_db.get(activity_id)
-
-        if not analytics:
-            return jsonify({"error": f"Atividade {activity_id} não encontrada"}), 404
-
-        return jsonify(analytics)
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-# Rota de teste para verificar se o servidor está funcionando
-@app.route("/test", methods=["GET"])
-def test():
-    return jsonify({"status": "API está funcionando"}), 200
-
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+if __name__ == '__main__':
+    #app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
 
