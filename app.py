@@ -76,7 +76,7 @@ def deploy():
 # Analytics de atividade
 # Simulação de um banco de dados de analytics
 analytics_db: Dict[str, List[Dict]] = {
-    "activity123": [
+    "This string is the Inven!RA activity ID": [  # Mudamos a chave para corresponder ao exemplo
         {
             "inveniraStdID": 1001,
             "quantAnalytics": [
@@ -109,49 +109,38 @@ analytics_db: Dict[str, List[Dict]] = {
 }
 
 
-def get_activity_analytics(activity_id: str) -> Optional[List[Dict]]:
-    """
-    Recupera os dados analíticos de uma atividade específica.
-    """
-    return analytics_db.get(activity_id)
-
-
-@app.route("/", methods=["POST"])  # Mudamos a rota para a raiz '/'
+@app.route("/api/analytics", methods=["POST"])  # Rota mais específica
 def handle_analytics_request():
     """
     Endpoint para processar pedidos de analytics de atividades.
-    Espera receber um JSON com o formato: {"activityID": "string"}
     """
+    if not request.is_json:
+        return jsonify({"error": "Content-Type deve ser application/json"}), 400
+
     try:
-        request_data = request.get_json()
+        data = request.get_json()
 
-        if not request_data or "activityID" not in request_data:
-            return (
-                jsonify(
-                    {"error": "Pedido inválido. É necessário fornecer um activityID."}
-                ),
-                400,
-            )
+        if not data or "activityID" not in data:
+            return jsonify({"error": "activityID é obrigatório"}), 400
 
-        activity_id = request_data["activityID"]
-        analytics_data = get_activity_analytics(activity_id)
+        activity_id = data["activityID"]
+        analytics = analytics_db.get(activity_id)
 
-        if analytics_data is None:
-            return (
-                jsonify(
-                    {
-                        "error": f"Não foram encontrados dados para a atividade {activity_id}"
-                    }
-                ),
-                404,
-            )
+        if not analytics:
+            return jsonify({"error": f"Atividade {activity_id} não encontrada"}), 404
 
-        return jsonify(analytics_data)
+        return jsonify(analytics)
 
     except Exception as e:
-        return jsonify({"error": f"Erro ao processar o pedido: {str(e)}"}), 500
+        return jsonify({"error": str(e)}), 500
 
 
-if __name__ == '__main__':
-    #app.run(debug=True)
-    app.run(debug=True, host="0.0.0.0", port=5000)
+# Rota de teste para verificar se o servidor está funcionando
+@app.route("/test", methods=["GET"])
+def test():
+    return jsonify({"status": "API está funcionando"}), 200
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
+
