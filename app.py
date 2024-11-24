@@ -70,14 +70,16 @@ def deploy():
     # Aqui você pode armazenar os dados necessários para a atividade
     return jsonify({"url": f"https://edumat.onrender.com/atividade?id={activity_id}&student_id={student_id}"})
 
+
 # Analytics de atividade
 @app.route('/provide_analytics', methods=['POST'])
-def provide_analytics():
-    if request.is_json:
-        data = request.get_json()
-        activity_id = data.get('activityID')
-        # Aqui você pode buscar os dados analíticos da atividade
-        return jsonify([
+def deploy():
+    data = request.get_json()
+    activity_id = data.get('activityID')
+    student_id = data.get('Inven!RAstdID')
+    json_params = data.get('json_params')
+    # Identificar a instância em causa
+    return jsonify([
             {
                 "inveniraStdID": 1001,
                 "qualAnalytics": [
@@ -107,8 +109,6 @@ def provide_analytics():
                 ],
             }
         ])
-    else:
-        return jsonify({"error": "Unsupported Media Type"}), 415
 
 if __name__ == '__main__':
     #app.run(debug=True)
