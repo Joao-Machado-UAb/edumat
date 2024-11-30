@@ -72,6 +72,30 @@ def deploy():
 
 
 # Analytics de atividade
+def analytics(url, activity_id):
+    data = {
+        'activityID': activity_id
+    }
+
+    try:
+        response = requests.post(url, json=data)
+        response.raise_for_status()  # Lança uma exceção para códigos de status HTTP 4xx/5xx
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f'Erro na requisição: {e}')
+        raise
+
+# Exemplo de uso
+url = 'https://edumat.onrender.com/analytics'
+activity_id = 'This string is the Inven!RA activity ID'
+
+try:
+    analytics = analytics(url, activity_id)
+    print('Análises de atividade:', analytics)
+    # Faça algo com os dados
+except Exception as e:
+    print(f'Erro ao obter análises: {e}')
+
 @app.route('/analytics', methods=['POST'])
 def analytics():
     analytics_data = [
