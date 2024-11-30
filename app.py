@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, send_from_directory, requests
+from flask import Flask, jsonify, request, send_from_directory
 
 app = Flask(__name__)
 
@@ -72,29 +72,28 @@ def deploy():
 
 
 # Analytics de atividade
-def analytics(url, activity_id):
-    data = {
-        'activityID': activity_id
-    }
-
-    try:
-        response = requests.post(url, json=data)
-        response.raise_for_status()  # Lança uma exceção para códigos de status HTTP 4xx/5xx
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f'Erro na requisição: {e}')
-        raise
-
-# Exemplo de uso
-url = 'https://edumat.onrender.com/analytics'
-activity_id = 'This string is the Inven!RA activity ID'
-
-try:
-    analytics = analytics(url, activity_id)
-    print('Análises de atividade:', analytics)
-    # Faça algo com os dados
-except Exception as e:
-    print(f'Erro ao obter análises: {e}')
+@app.route('/analytics', methods=['POST'])
+def analytics():
+    analytics_data = [
+        {
+            "inveniraStdID": 1001,
+            "quantAnalytics": [
+                {"name": "Número de acessos", "value": 50},
+                {"name": "Download de recursos", "value": 12},
+                {"name": "Progresso na atividade (%)", "value": 10.0},
+            ],
+            "qualAnalytics": [
+                {"name": "Acesso à atividade", "value": True},
+                {"name": "Download de recursos", "value": True},
+                {"name": "Upload de documentos", "value": True},
+                {
+                    "name": "Relatório das respostas concretamente dadas",
+                    "value": "Suficiente",
+                },
+            ],
+        }
+    ]
+    return jsonify(analytics_data)
 
 if __name__ == '__main__':
     #app.run(debug=True)
