@@ -7,14 +7,7 @@ class SingletonDB:
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
             cls._instance = super(SingletonDB, cls).__new__(cls)
-            cls._instance.db = {
-                "activityID": "teste123",
-                "Inven!RAstdID": "aluno1",
-                "json_params": {
-                    "resumo": "Teste de resumo",
-                    "instrucoes": "https://exemplo.com",
-                },
-            }  # Simula um banco de dados
+            cls._instance.db = {}  # Simula um banco de dados
         return cls._instance
 
     def get_instance(self):
@@ -24,7 +17,7 @@ class SingletonDB:
         if activity_id not in self._instance.db:
             self._instance.db[activity_id] = {
                 "resumo": "Resumo de equações de 7º ano: Aqui você pode encontrar um resumo das equações de 7º ano.",
-                "instrucoes": "https://mundoeducacao.uol.com.br/matematica/quatro-passos-para-resolver-equacoes-primeiro-grau.htm",
+                "instrucoes": "https://www.matematica.pt/aulas-matematica.php?ano=7",
             }
         return self._instance.db[activity_id]
 
@@ -36,4 +29,3 @@ class SingletonDB:
             self._instance.db[activity_id]["resumo"] = resumo
             self._instance.db[activity_id]["instrucoes"] = instrucoes
         return self._instance.db[activity_id]
-
