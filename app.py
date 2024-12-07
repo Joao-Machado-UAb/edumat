@@ -87,7 +87,11 @@ def deploy():
 def analytics():
     data = request.get_json()
     activity_id = data.get('activityID')
+    if not activity_id:
+        return jsonify({"error": "activityID is required"}), 400
     analytics_data = singleton_db.access_data(activity_id)
+    if analytics_data is None:
+        return jsonify({"error": "No data found for the given activityID"}), 404
     return jsonify(analytics_data)
 
 # atividade equações
