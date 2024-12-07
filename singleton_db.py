@@ -16,7 +16,7 @@ class SingletonDB:
         if activity_id not in self._instance.db:
             self._instance.db[activity_id] = {
                 "resumo": "Resumo de equações de 7º ano: Aqui você pode encontrar um resumo das equações de 7º ano.",
-                "instrucoes": "https://exemplo.com/questoes_equacoes_7_ano"
+                "instrucoes": "https://mundoeducacao.uol.com.br/matematica/quatro-passos-para-resolver-equacoes-primeiro-grau.htm"
             }
         return self._instance.db[activity_id]
 
