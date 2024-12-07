@@ -75,5 +75,19 @@ def analytics():
     analytics_data = singleton_db.access_data(activity_id)
     return jsonify(analytics_data)
 
+@app.route('/equacoes', methods=['GET'])
+def equacoes():
+    return '''
+    <h2>Atividade de Equações de 7º Ano</h2>
+    <p>Aqui você pode resolver equações de 7º ano.</p>
+    <form>
+        <label for="equacao">Equação:</label><br>
+        <input type="text" id="equacao" name="equacao"><br>
+        <label for="resposta">Resposta:</label><br>
+        <input type="text" id="resposta" name="resposta"><br>
+        <input type="submit" value="Submit">
+    </form>
+    '''
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000)
