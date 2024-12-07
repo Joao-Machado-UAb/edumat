@@ -1,8 +1,6 @@
-from flask import Flask, jsonify, request, send_from_directory, render_template_string
-from ActivityProvider import ActivityProvider
+from flask import Flask, jsonify, request, send_from_directory
 
 app = Flask(__name__)
-activity_provider = ActivityProvider()
 
 @app.route('/')
 def index():
@@ -56,6 +54,7 @@ def analytics_list():
 @app.route('/user_url', methods=['GET'])
 def user_url():
     activity_id = request.args.get('activityID')
+    singleton_db.create_instance(activity_id)
     return jsonify({"url": f"https://edumat.onrender.com/atividade?id={activity_id}"})
 
 @app.route('/deploy', methods=['POST'])
@@ -64,96 +63,17 @@ def deploy():
     activity_id = data.get('activityID')
     student_id = data.get('Inven!RAstdID')
     json_params = data.get('json_params')
+    resumo = json_params.get('resumo', '')
+    instrucoes = json_params.get('instrucoes', '')
+    singleton_db.execute_operations(activity_id, resumo, instrucoes)
     return jsonify({"url": f"https://edumat.onrender.com/atividade?id={activity_id}&student_id={student_id}"})
 
 @app.route('/analytics', methods=['POST'])
 def analytics():
     data = request.get_json()
     activity_id = data.get('activityID')
-
-    analytics_data = [
-        {
-            "inveniraStdID": 1001,
-            "qualAnalytics": [
-                {"name": "Acesso à atividade", "value": True},
-                {"name": "Download de recursos", "value": True},
-                {"name": "Upload de documentos", "value": True},
-                {"name": "Relatório das respostas concretamente dadas", "value": "Suficiente"}
-            ],
-            "quantAnalytics": [
-                {"name": "Número de acessos", "value": 50},
-                {"name": "Download de recursos", "value": 12},
-                {"name": "Progresso na atividade (%)", "value": 10.0}
-            ],
-        },
-        {
-            "inveniraStdID": 1002,
-            "qualAnalytics": [
-                {"name": "Acesso à atividade", "value": True},
-                {"name": "Download de recursos", "value": True},
-                {"name": "Upload de documentos", "value": True},
-                {"name": "Relatório das respostas concretamente dadas", "value": "Suficiente"}
-            ],
-            "quantAnalytics": [
-                {"name": "Número de acessos", "value": 60},
-                {"name": "Download de recursos", "value": 16},
-                {"name": "Progresso na atividade (%)", "value": 40.0}
-            ],
-        }
-    ]
-
+    analytics_data = singleton_db.access_data(activity_id)
     return jsonify(analytics_data)
-
-@app.route('/add_exercise', methods=['POST'])
-def add_exercise():
-    data = request.get_json()
-    exercise = data.get('exercise')
-    activity_provider.add_exercise(exercise)
-    return jsonify({"message": "Exercise added successfully"})
-
-@app.route('/get_exercises', methods=['GET'])
-def get_exercises():
-    exercises = activity_provider.get_exercises()
-    return jsonify(exercises)
-
-@app.route('/add_exercise_form', methods=['GET'])
-def add_exercise_form():
-    return render_template_string('''
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Adicionar Exercício</title>
-    </head>
-    <body>
-        <h1>Adicionar Exercício de Equação</h1>
-        <form id="exerciseForm">
-            <label for="exercise">Exercício:</label><br>
-            <textarea id="exercise" name="exercise" rows="4" cols="50"></textarea><br>
-            <input type="submit" value="Adicionar Exercício">
-        </form>
-        <script>
-            document.querySelector('#exerciseForm').addEventListener('submit', function(event) {
-                event.preventDefault();
-                const exercise = document.getElementById('exercise').value;
-                fetch('/add_exercise', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ exercise: exercise })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    alert(data.message);
-                });
-            });
-        </script>
-    </body>
-    </html>
-    ''')
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000)
-
