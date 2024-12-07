@@ -1,6 +1,6 @@
 # app.py
 
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, render_template
 from singleton_db import SingletonDB
 
 app = Flask(__name__)
@@ -10,9 +10,8 @@ singleton_db = SingletonDB()
 
 @app.route('/')
 def index():
-    return send_from_directory('.', 'index.html')
+    return render_template('index.html')
 
-# Página de configuração da atividade e parâmetros respetivos
 @app.route('/config', methods=['GET'])
 def config():
     return '''
@@ -42,7 +41,6 @@ def json_params():
         {"name": "instrucoes", "type": "text/plain"}
     ])
 
-# Lista de analytics da atividade
 @app.route('/analytics_list', methods=['GET'])
 def analytics_list():
     return jsonify({
@@ -59,14 +57,12 @@ def analytics_list():
         ]
     })
 
-# Deploy da atividade - Primeira Etapa
 @app.route('/user_url', methods=['GET'])
 def user_url():
     activity_id = request.args.get('activityID')
     singleton_db.create_instance(activity_id)
-    return jsonify({"url": f"https://edumat7.onrender.com/atividade?id={activity_id}"})
+    return jsonify({"url": f"https://edumat.onrender.com/atividade?id={activity_id}"})
 
-# Deploy da atividade - Segunda Etapa
 @app.route('/deploy', methods=['POST'])
 def deploy():
     data = request.get_json()
@@ -76,9 +72,8 @@ def deploy():
     resumo = json_params.get('resumo', '')
     instrucoes = json_params.get('instrucoes', '')
     singleton_db.execute_operations(activity_id, resumo, instrucoes)
-    return jsonify({"url": f"https://edumat7.onrender.com/atividade?id={activity_id}&student_id={student_id}"})
+    return jsonify({"url": f"https://edumat.onrender.com/atividade?id={activity_id}&student_id={student_id}"})
 
-# Analytics de atividade
 @app.route('/analytics', methods=['POST'])
 def analytics():
     data = request.get_json()
@@ -86,7 +81,6 @@ def analytics():
     analytics_data = singleton_db.access_data(activity_id)
     return jsonify(analytics_data)
 
- # Atividade de equações de 7.º ano
 @app.route('/equacoes', methods=['GET'])
 def equacoes():
     return '''
@@ -103,4 +97,3 @@ def equacoes():
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000)
-    
