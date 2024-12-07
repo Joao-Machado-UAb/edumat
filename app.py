@@ -90,7 +90,7 @@ def equacoes():
         instrucoes = data.get('instrucoes', '')
     else:
         resumo = "Resumo de equações de 7º ano: Aqui você pode encontrar um resumo das equações de 7º ano."
-        instrucoes = "https://exemplo.com/questoes_equacoes_7_ano"
+        instrucoes = "https://www.matematica.pt/aulas-exercicios.php?id=190"
     return render_template('equacoes.html', resumo=resumo, instrucoes=instrucoes)
 
 if __name__ == '__main__':
