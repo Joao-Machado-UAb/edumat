@@ -16,9 +16,9 @@ def index():
 def config():
     return '''
     <form>
-        <label for="resumo">Sumário:</label><br>
+        <label for="resumo">Resumo:</label><br>
         <input type="text" id="resumo" name="resumo"><br>
-        <label for="instrucoes">Link para as questões:</label><br>
+        <label for="instrucoes">URL:</label><br>
         <input type="text" id="instrucoes" name="instrucoes"><br>
         <input type="hidden" id="hidden_resumo" name="hidden_resumo">
         <input type="hidden" id="hidden_instrucoes" name="hidden_instrucoes">
