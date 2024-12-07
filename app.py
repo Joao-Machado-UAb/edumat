@@ -26,6 +26,7 @@ def config():
         <input type="hidden" id="hidden_instrucoes" name="hidden_instrucoes">
         <input type="submit" value="Submit">
     </form>
+    <a href="/">Voltar à Página Inicial</a>
     <script>
         document.querySelector('form').addEventListener('submit', function(event) {
             event.preventDefault();
