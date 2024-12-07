@@ -12,6 +12,7 @@ singleton_db = SingletonDB()
 def index():
     return send_from_directory('.', 'index.html')
 
+# Página de configuração da atividade e parâmetros respetivos
 @app.route('/config', methods=['GET'])
 def config():
     return '''
@@ -41,6 +42,7 @@ def json_params():
         {"name": "instrucoes", "type": "text/plain"}
     ])
 
+# Lista de analytics da atividade
 @app.route('/analytics_list', methods=['GET'])
 def analytics_list():
     return jsonify({
@@ -57,12 +59,14 @@ def analytics_list():
         ]
     })
 
+# Deploy da atividade - Primeira Etapa
 @app.route('/user_url', methods=['GET'])
 def user_url():
     activity_id = request.args.get('activityID')
     singleton_db.create_instance(activity_id)
     return jsonify({"url": f"https://edumat7.onrender.com/atividade?id={activity_id}"})
 
+# Deploy da atividade - Segunda Etapa
 @app.route('/deploy', methods=['POST'])
 def deploy():
     data = request.get_json()
@@ -74,6 +78,7 @@ def deploy():
     singleton_db.execute_operations(activity_id, resumo, instrucoes)
     return jsonify({"url": f"https://edumat7.onrender.com/atividade?id={activity_id}&student_id={student_id}"})
 
+# Analytics de atividade
 @app.route('/analytics', methods=['POST'])
 def analytics():
     data = request.get_json()
@@ -81,6 +86,7 @@ def analytics():
     analytics_data = singleton_db.access_data(activity_id)
     return jsonify(analytics_data)
 
+ # Atividade de equações de 7.º ano
 @app.route('/equacoes', methods=['GET'])
 def equacoes():
     return '''
