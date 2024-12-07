@@ -16,15 +16,15 @@ class SingletonDB:
         if activity_id not in self._instance.db:
             self._instance.db[activity_id] = {
                 "resumo": "Resumo de equações de 7º ano: Aqui você pode encontrar um resumo das equações de 7º ano.",
-                "link_questoes": "https://exemplo.com/questoes_equacoes_7_ano"
+                "instrucoes": "https://exemplo.com/questoes_equacoes_7_ano"
             }
         return self._instance.db[activity_id]
 
     def access_data(self, activity_id):
         return self._instance.db.get(activity_id, None)
 
-    def execute_operations(self, activity_id, resumo, link_questoes):
+    def execute_operations(self, activity_id, resumo, instrucoes):
         if activity_id in self._instance.db:
             self._instance.db[activity_id]["resumo"] = resumo
-            self._instance.db[activity_id]["link_questoes"] = link_questoes
+            self._instance.db[activity_id]["instrucoes"] = instrucoes
         return self._instance.db[activity_id]
