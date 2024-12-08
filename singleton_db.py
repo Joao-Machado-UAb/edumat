@@ -4,7 +4,7 @@ DEFAULT_RESUMO = "Resumo de equações de 7º ano: Aqui você pode encontrar um 
 
 
 class SingletonDB:
-    # Classe Singleton para gerenciar um banco de dados
+    # Classe Singleton para administrar o banco de dados
 
     _instance = None
 
@@ -19,7 +19,13 @@ class SingletonDB:
         return self._instance.db
 
     def create_instance(self, activity_id):
-        # Cria uma entrada no banco de dados se ela não existir
+        """
+        Cria uma entrada no banco de dados se ela não existir
+                Parâmetros:
+            activity_id: ID da atividade a ser criada
+        Retorna:
+            A entrada criada ou já existente
+        """
         if activity_id not in self._instance.db:
             self._instance.db[activity_id] = {
                 "resumo": DEFAULT_RESUMO,
@@ -28,12 +34,19 @@ class SingletonDB:
         return self._instance.db[activity_id]
 
     def access_data(self, activity_id):
-        # Retorna os dados de uma entrada específica ou None se não existir
+        """
+        Retorna os dados de uma entrada específica
+
+        Parâmetros:
+            activity_id: ID da atividade a ser acessada
+        Retorna:
+            Os dados da entrada, ou None se não existir
+        """
         return self._instance.db.get(activity_id, None)
 
     def execute_operations(self, activity_id, resumo=None, instrucoes=None):
         """
-        Atualiza os dados de uma entrada existente no banco de dados.
+        Atualiza os dados de uma entrada existente no banco de dados
 
         Parâmetros:
             activity_id: ID da atividade a ser atualizada
