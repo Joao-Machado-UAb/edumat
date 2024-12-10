@@ -1,9 +1,10 @@
+<!-- templates/index.html -->
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuração da Atividade</title>
+    <title>Activity Provider - Edum@t</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -31,39 +32,19 @@
             font-size: 2rem;
             margin-bottom: 10px;
         }
-        h2 {
-            font-size: 1.5rem;
+        p {
             margin-bottom: 20px;
         }
-        label {
-            font-size: 16px;
-            display: block;
-            margin-bottom: 8px;
+        ul {
+            list-style-type: none;
+            padding: 0;
         }
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        input[type="submit"] {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        input[type="submit"]:hover {
-            background-color: #45a049;
+        ul li {
+            margin: 10px 0;
         }
         a {
-            display: inline-block;
-            margin-top: 20px;
-            text-align: center;
-            color: #1e90ff;
             text-decoration: none;
+            color: #1e90ff;
             font-weight: bold;
         }
         a:hover {
@@ -84,43 +65,21 @@
     <header>
         <h1>Edumat Activity Provider</h1>
     </header>
-    
+    <br>
     <main>
-        <h2>Configuração da Atividade</h2>
-
-        <form>
-            <label for="resumo">Resumo:</label>
-            <input type="text" id="resumo" name="resumo" placeholder="Digite o resumo da atividade">
-
-            <label for="instrucoes">Instruções (URL):</label>
-            <input type="text" id="instrucoes" name="instrucoes" placeholder="Digite a URL das instruções">
-
-            <!-- Campos ocultos para enviar os dados ao backend -->
-            <input type="hidden" id="hidden_resumo" name="hidden_resumo">
-            <input type="hidden" id="hidden_instrucoes" name="hidden_instrucoes">
-
-            <input type="submit" value="Salvar Configurações">
-        </form>
-
-        <a href="/">Voltar à Página Inicial</a>
+        <h2>Activity Provider - Edum@</h2>
+        <p>Abaixo estão os links para os diferentes serviços disponíveis:</p>
+        <ul>
+            <li><a href="/config">1. Página de configuração da atividade</a></li>
+            <li><a href="/json_params">2. Lista de parâmetros</a></li>
+            <li><a href="/user_url?activityID=12345">3. URL de deploy da atividade</a></li>
+            <li><a href="/analytics">4. Analytics de um utilizador da atividade</a></li>
+            <li><a href="/analytics_list">5. Lista de analytics disponíveis na atividade</a></li>
+            <li><a href="/equacoes?activityID=12345">6. Atividade de Equações de 7º Ano</a></li>
+        </ul>
     </main>
-
     <footer>
         &copy; 2024 Edum@t. Todos os direitos reservados.
     </footer>
-
-    <script>
-        // Lógica para atualizar os campos ocultos e mostrar alerta
-        document.querySelector('form').addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            // Atualiza os campos ocultos com os valores dos campos de texto
-            document.getElementById('hidden_resumo').value = document.getElementById('resumo').value;
-            document.getElementById('hidden_instrucoes').value = document.getElementById('instrucoes').value;
-
-            // Mostra um alerta de sucesso
-            alert('Configuração salva com sucesso!');
-        });
-    </script>
 </body>
 </html>
