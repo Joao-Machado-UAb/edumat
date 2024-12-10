@@ -15,14 +15,28 @@ def index():
 
 
 # Página de configuração da atividade e parâmetros respetivos
-from flask import Flask, render_template
-
-app = Flask(__name__)
-
-# Página de configuração da atividade e parâmetros respetivos
 @app.route("/config", methods=["GET"])
 def config():
-    return render_template("config.html")
+    return """
+    <form>
+        <label for="resumo">Resumo:</label><br>
+        <input type="text" id="resumo" name="resumo"><br>
+        <label for="instrucoes">URL:</label><br>
+        <input type="text" id="instrucoes" name="instrucoes"><br>
+        <input type="hidden" id="hidden_resumo" name="hidden_resumo">
+        <input type="hidden" id="hidden_instrucoes" name="hidden_instrucoes">
+        <input type="submit" value="Submit">
+    </form>
+    <a href="/">Voltar à Página Inicial</a>
+    <script>
+        document.querySelector('form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            document.getElementById('hidden_resumo').value = document.getElementById('resumo').value;
+            document.getElementById('hidden_instrucoes').value = document.getElementById('instrucoes').value;
+            alert('Configuração salva com sucesso!');
+        });
+    </script>
+    """
 
 
 # parametros json
