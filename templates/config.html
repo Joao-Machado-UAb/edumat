@@ -9,17 +9,31 @@
             font-family: Arial, sans-serif;
             line-height: 1.6;
             margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
+            padding: 0;
+            background-color: #f9f9f9;
             color: #333;
         }
-        form {
-            max-width: 500px;
-            margin: 0 auto;
+        header {
+            background-color: #1e90ff;
+            color: white;
+            padding: 20px 10px;
+            text-align: center;
+        }
+        main {
             padding: 20px;
-            background-color: #fff;
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
         }
         label {
             font-size: 16px;
@@ -45,35 +59,55 @@
             background-color: #45a049;
         }
         a {
-            display: block;
+            display: inline-block;
             margin-top: 20px;
             text-align: center;
             color: #1e90ff;
             text-decoration: none;
+            font-weight: bold;
         }
         a:hover {
             text-decoration: underline;
         }
+        footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: #1e90ff;
+            color: white;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
     </style>
 </head>
 <body>
-    <h1>Configuração da Atividade</h1>
+    <header>
+        <h1>Edumat Activity Provider</h1>
+    </header>
+    
+    <main>
+        <h2>Configuração da Atividade</h2>
 
-    <form>
-        <label for="resumo">Resumo:</label>
-        <input type="text" id="resumo" name="resumo" placeholder="Digite o resumo da atividade">
+        <form>
+            <label for="resumo">Resumo:</label>
+            <input type="text" id="resumo" name="resumo" placeholder="Digite o resumo da atividade">
 
-        <label for="instrucoes">Instruções (URL):</label>
-        <input type="text" id="instrucoes" name="instrucoes" placeholder="Digite a URL das instruções">
+            <label for="instrucoes">Instruções (URL):</label>
+            <input type="text" id="instrucoes" name="instrucoes" placeholder="Digite a URL das instruções">
 
-        <!-- Campos ocultos para enviar os dados ao backend -->
-        <input type="hidden" id="hidden_resumo" name="hidden_resumo">
-        <input type="hidden" id="hidden_instrucoes" name="hidden_instrucoes">
+            <!-- Campos ocultos para enviar os dados ao backend -->
+            <input type="hidden" id="hidden_resumo" name="hidden_resumo">
+            <input type="hidden" id="hidden_instrucoes" name="hidden_instrucoes">
 
-        <input type="submit" value="Salvar Configurações">
-    </form>
+            <input type="submit" value="Salvar Configurações">
+        </form>
 
-    <a href="/">Voltar à Página Inicial</a>
+        <a href="/">Voltar à Página Inicial</a>
+    </main>
+
+    <footer>
+        &copy; 2024 Edum@t. Todos os direitos reservados.
+    </footer>
 
     <script>
         // Lógica para atualizar os campos ocultos e mostrar alerta
