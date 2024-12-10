@@ -88,52 +88,46 @@ def deploy():
     )
 
 
-# Analytics de atividade
-@app.route("/analytics", methods=["GET", "POST"])
+@app.route("/analytics", methods=["GET"])
 def analytics():
-    if request.method == "POST":
-        data = request.get_json()
-        activity_id = data.get("activityID")
-        #filtrar analytics_data baseado no activity_id
-    else:
-        # Dados analíticos simulados
-        analytics_data = [
-            {
-                "inveniraStdID": 1001,
-                "qualAnalytics": [
-                    {"name": "Acesso à atividade", "value": True},
-                    {"name": "Download de recursos", "value": True},
-                    {"name": "Upload de documentos", "value": True},
-                    {
-                        "name": "Relatório das respostas concretamente dadas",
-                        "value": "Suficiente",
-                    },
-                ],
-                "quantAnalytics": [
-                    {"name": "Número de acessos", "value": 50},
-                    {"name": "Download de recursos", "value": 12},
-                    {"name": "Progresso na atividade (%)", "value": 10.0},
-                ],
-            },
-            {
-                "inveniraStdID": 1002,
-                "qualAnalytics": [
-                    {"name": "Acesso à atividade", "value": True},
-                    {"name": "Download de recursos", "value": True},
-                    {"name": "Upload de documentos", "value": True},
-                    {
-                        "name": "Relatório das respostas concretamente dadas",
-                        "value": "Suficiente",
-                    },
-                ],
-                "quantAnalytics": [
-                    {"name": "Número de acessos", "value": 60},
-                    {"name": "Download de recursos", "value": 16},
-                    {"name": "Progresso na atividade (%)", "value": 40.0},
-                ],
-            },
-        ]
-        return jsonify(analytics_data)
+    # Dados simulados
+    analytics_data = [
+        {
+            "inveniraStdID": 1001,
+            "qualAnalytics": [
+                {"name": "Acesso à atividade", "value": True},
+                {"name": "Download de recursos", "value": True},
+                {"name": "Upload de documentos", "value": True},
+                {
+                    "name": "Relatório das respostas concretamente dadas",
+                    "value": "Suficiente",
+                },
+            ],
+            "quantAnalytics": [
+                {"name": "Número de acessos", "value": 50},
+                {"name": "Download de recursos", "value": 12},
+                {"name": "Progresso na atividade (%)", "value": 10.0},
+            ],
+        },
+        {
+            "inveniraStdID": 1002,
+            "qualAnalytics": [
+                {"name": "Acesso à atividade", "value": True},
+                {"name": "Download de recursos", "value": True},
+                {"name": "Upload de documentos", "value": True},
+                {
+                    "name": "Relatório das respostas concretamente dadas",
+                    "value": "Suficiente",
+                },
+            ],
+            "quantAnalytics": [
+                {"name": "Número de acessos", "value": 60},
+                {"name": "Download de recursos", "value": 16},
+                {"name": "Progresso na atividade (%)", "value": 40.0},
+            ],
+        },
+    ]
+    return render_template("analytics.html", analytics_data=analytics_data)
 
 
 if __name__ == "__main__":
