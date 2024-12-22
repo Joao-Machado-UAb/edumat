@@ -59,7 +59,7 @@ def analytics_list():
 def user_url():
     activity_id = request.args.get("activityID")
     singleton_db.create_instance(activity_id)
-    return jsonify({"url": f"https://edumat7.onrender.com/atividade?id={activity_id}"})
+    return jsonify({"url": f"https://edumat.onrender.com/atividade?id={activity_id}"})
 
 
 # Deploy da atividade - Segunda Etapa
@@ -74,7 +74,7 @@ def deploy():
     singleton_db.execute_operations(activity_id, resumo, instrucoes)
     return jsonify(
         {
-            "url": f"https://edumat7.onrender.com/atividade?id={activity_id}&student_id={student_id}"
+            "url": f"https://edumat.onrender.com/atividade?id={activity_id}&student_id={student_id}"
         }
     )
 
