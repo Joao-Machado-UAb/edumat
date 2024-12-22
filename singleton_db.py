@@ -1,6 +1,6 @@
 # singleton_db.py
 
-DEFAULT_RESUMO = "Resumo de equações de 7º ano: Aqui você pode encontrar um resumo das equações de 7º ano."
+DEFAULT_RESUMO = "Resumo de equações de 7º ano: Aqui pode encontrar um resumo de equações de 7º ano."
 
 
 class SingletonDB:
