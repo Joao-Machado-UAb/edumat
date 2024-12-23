@@ -13,12 +13,10 @@ facade = Facade()
 def index():
     return render_template("index.html")
 
-
 # Página de configuração da atividade e parâmetros respetivos
 @app.route("/config", methods=["GET"])
 def config():
     return render_template("config.html")
-
 
 # parametros json
 @app.route("/json_params", methods=["GET"])
@@ -30,29 +28,10 @@ def json_params():
         ]
     )
 
-
 # Lista de analytics da atividade
 @app.route("/analytics_list", methods=["GET"])
 def analytics_list():
-    return jsonify(
-        {
-            "qualAnalytics": [
-                {"name": "Acesso à atividade", "type": "boolean"},
-                {"name": "Download de recursos", "type": "boolean"},
-                {"name": "Upload de documentos", "type": "boolean"},
-                {
-                    "name": "Relatório das respostas concretamente dadas",
-                    "type": "text/plain",
-                },
-            ],
-            "quantAnalytics": [
-                {"name": "Número de acessos", "type": "integer"},
-                {"name": "Download de recursos", "type": "integer"},
-                {"name": "Progresso na atividade (%)", "type": "integer"},
-            ],
-        }
-    )
-
+    return jsonify(facade.get_analytics_list())
 
 # Deploy da atividade - Primeira Etapa
 @app.route("/user_url", methods=["GET"])
@@ -60,7 +39,6 @@ def user_url():
     activity_id = request.args.get("activityID")
     facade.create_activity(activity_id)
     return jsonify({"url": f"https://edumat.onrender.com/atividade?id={activity_id}"})
-
 
 # Deploy da atividade - Segunda Etapa
 @app.route("/deploy", methods=["POST"])
@@ -78,54 +56,16 @@ def deploy():
         }
     )
 
-
 @app.route("/analytics", methods=["GET"])
 def analytics():
-    # Dados simulados
-    analytics_data = [
-        {
-            "inveniraStdID": 1001,
-            "qualAnalytics": [
-                {"name": "Acesso à atividade", "value": True},
-                {"name": "Download de recursos", "value": True},
-                {"name": "Upload de documentos", "value": True},
-                {
-                    "name": "Relatório das respostas concretamente dadas",
-                    "value": "Suficiente",
-                },
-            ],
-            "quantAnalytics": [
-                {"name": "Número de acessos", "value": 50},
-                {"name": "Download de recursos", "value": 12},
-                {"name": "Progresso na atividade (%)", "value": 10.0},
-            ],
-        },
-        {
-            "inveniraStdID": 1002,
-            "qualAnalytics": [
-                {"name": "Acesso à atividade", "value": True},
-                {"name": "Download de recursos", "value": True},
-                {"name": "Upload de documentos", "value": True},
-                {
-                    "name": "Relatório das respostas concretamente dadas",
-                    "value": "Suficiente",
-                },
-            ],
-            "quantAnalytics": [
-                {"name": "Número de acessos", "value": 60},
-                {"name": "Download de recursos", "value": 16},
-                {"name": "Progresso na atividade (%)", "value": 40.0},
-            ],
-        },
-    ]
+    analytics_data = facade.get_analytics_data()
     return render_template("analytics.html", analytics_data=analytics_data)
-
 
 # atividade equações
 @app.route("/equacoes", methods=["GET"])
 def equacoes():
     activity_id = request.args.get("activityID")
-    data = facade.get_activity_data(activity_id)
+    data = facade.access_activity_data(activity_id)
     if data:
         resumo = data.get("resumo", "")
         instrucoes = data.get("instrucoes", "")
@@ -133,7 +73,6 @@ def equacoes():
         resumo = "Resumo de equações de 7º ano: Aqui você pode encontrar um resumo das equações de 7º ano."
         instrucoes = "https://www.matematica.pt/aulas-exercicios.php?id=190"
     return render_template("equacoes.html", resumo=resumo, instrucoes=instrucoes)
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
