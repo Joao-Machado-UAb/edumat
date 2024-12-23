@@ -1,9 +1,8 @@
-# facade.py
+# activity_facade.py
 
 from singleton_db import SingletonDB
 
-
-class Facade:
+class ActivityFacade:
     def __init__(self):
         self.db = SingletonDB()
 
@@ -22,10 +21,7 @@ class Facade:
                 {"name": "Acesso à atividade", "type": "boolean"},
                 {"name": "Download de recursos", "type": "boolean"},
                 {"name": "Upload de documentos", "type": "boolean"},
-                {
-                    "name": "Relatório das respostas concretamente dadas",
-                    "type": "text/plain",
-                },
+                {"name": "Relatório das respostas concretamente dadas", "type": "text/plain"},
             ],
             "quantAnalytics": [
                 {"name": "Número de acessos", "type": "integer"},
@@ -42,10 +38,7 @@ class Facade:
                     {"name": "Acesso à atividade", "value": True},
                     {"name": "Download de recursos", "value": True},
                     {"name": "Upload de documentos", "value": True},
-                    {
-                        "name": "Relatório das respostas concretamente dadas",
-                        "value": "Suficiente",
-                    },
+                    {"name": "Relatório das respostas concretamente dadas", "value": "Suficiente"},
                 ],
                 "quantAnalytics": [
                     {"name": "Número de acessos", "value": 50},
@@ -59,10 +52,7 @@ class Facade:
                     {"name": "Acesso à atividade", "value": True},
                     {"name": "Download de recursos", "value": True},
                     {"name": "Upload de documentos", "value": True},
-                    {
-                        "name": "Relatório das respostas concretamente dadas",
-                        "value": "Suficiente",
-                    },
+                    {"name": "Relatório das respostas concretamente dadas", "value": "Suficiente"},
                 ],
                 "quantAnalytics": [
                     {"name": "Número de acessos", "value": 60},
