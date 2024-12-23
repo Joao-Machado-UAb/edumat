@@ -1,9 +1,9 @@
-# activity_facade.py
+# facade.py
 
 from singleton_db import SingletonDB
 
 
-class ActivityFacade:
+class Facade:
     def __init__(self):
         self.db = SingletonDB()
 
