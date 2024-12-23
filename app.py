@@ -1,12 +1,12 @@
 # app.py
 
 from flask import Flask, jsonify, request, render_template
-from singleton_db import SingletonDB
+from facade import Facade
 
 app = Flask(__name__)
 
-# Instância única do SingletonDB
-singleton_db = SingletonDB()
+# Instância única do Facade
+facade = Facade()
 
 # Página de inicial
 @app.route("/")
@@ -58,7 +58,7 @@ def analytics_list():
 @app.route("/user_url", methods=["GET"])
 def user_url():
     activity_id = request.args.get("activityID")
-    singleton_db.create_instance(activity_id)
+    facade.create_activity(activity_id)
     return jsonify({"url": f"https://edumat.onrender.com/atividade?id={activity_id}"})
 
 
@@ -71,7 +71,7 @@ def deploy():
     json_params = data.get("json_params")
     resumo = json_params.get("resumo", "")
     instrucoes = json_params.get("instrucoes", "")
-    singleton_db.execute_operations(activity_id, resumo, instrucoes)
+    facade.update_activity(activity_id, resumo, instrucoes)
     return jsonify(
         {
             "url": f"https://edumat.onrender.com/atividade?id={activity_id}&student_id={student_id}"
@@ -125,7 +125,7 @@ def analytics():
 @app.route("/equacoes", methods=["GET"])
 def equacoes():
     activity_id = request.args.get("activityID")
-    data = singleton_db.access_data(activity_id)
+    data = facade.get_activity_data(activity_id)
     if data:
         resumo = data.get("resumo", "")
         instrucoes = data.get("instrucoes", "")
