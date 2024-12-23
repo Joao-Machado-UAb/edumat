@@ -1,7 +1,7 @@
 # app.py
 
 from flask import Flask, jsonify, request, render_template
-from facade import Facade
+from Facade import facade
 
 app = Flask(__name__)
 
