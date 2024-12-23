@@ -30,3 +30,7 @@ def deploy():
 def analytics():
     analytics_data = facade.get_analytics()
     return render_template("analytics.html", analytics_data=analytics_data)
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
