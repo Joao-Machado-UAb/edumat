@@ -19,7 +19,7 @@ class AnalyticsObserver(ABC):
         pass
 
     def _save_to_json(self, filename: str, data: Dict[str, Any]) -> None:
-        """Método auxiliar para salvar dados em arquivo JSON"""
+        """Método auxiliar para guardar dados em arquivo JSON"""
         os.makedirs("analytics_data", exist_ok=True)
         filepath = f"analytics_data/{filename}"
 
