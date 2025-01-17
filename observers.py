@@ -1,6 +1,12 @@
 # observers.py
 
+#  importação do módulo abc (Abstract Base Classes) do Python, que fornece infraestrutura para criar classes abstratas
 from abc import ABC, abstractmethod
+
+# importação do módulo typing (tipos genéricos do módulo typing):
+# List - representa uma lista e permite especificar o tipo dos elementos contidos na lista;
+# dict - permite especificar os tipos das chaves e valores do dicionário;
+# Any - (int, str, list, etc.)
 from typing import List, Dict, Any
 
 # Interface para o Observer
