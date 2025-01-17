@@ -8,64 +8,101 @@ from abc import ABC, abstractmethod
 # dict - permite especificar os tipos das chaves e valores do dicionário;
 # Any - (int, str, list, etc.)
 from typing import List, Dict, Any
+from datetime import datetime
+import json
+import os
 
-# Interface para o Observer
+
 class AnalyticsObserver(ABC):
     @abstractmethod
     def update(self, activity_id: str, student_id: str, data: Dict[str, Any]) -> None:
         pass
 
+    def _save_to_json(self, filename: str, data: Dict[str, Any]) -> None:
+        """Método auxiliar para salvar dados em arquivo JSON"""
+        # Cria o diretório 'analytics_data' caso não exista
+        os.makedirs("analytics_data", exist_ok=True)
 
-# Observer Concreto para Analytics Qualitativas
+        filepath = f"analytics_data/{filename}"
+
+        # Carrega dados existentes ou cria lista vazia
+        if os.path.exists(filepath):
+            with open(filepath, "r") as file:
+                existing_data = json.load(file)
+        else:
+            existing_data = []
+
+        # Adiciona timestamp aos dados
+        data["timestamp"] = datetime.now().isoformat()
+        existing_data.append(data)
+
+        # Guarda dados atualizados
+        with open(filepath, "w") as file:
+            json.dump(existing_data, file, indent=4)
+
+
 class QualitativeAnalyticsObserver(AnalyticsObserver):
     def update(self, activity_id: str, student_id: str, data: Dict[str, Any]) -> None:
-        # Processa e armazena analytics qualitativas
+        # Processa dados qualitativos
         qualitative_data = {
-            "acesso_atividade": data.get("acesso_atividade", False),
-            "download_recursos": data.get("download_recursos", False),
-            "upload_documentos": data.get("upload_documentos", False),
-            "relatorio_respostas": data.get("relatorio_respostas", ""),
+            "activity_id": activity_id,
+            "student_id": student_id,
+            "type": "qualitative",
+            "data": {
+                "acesso_atividade": data.get("acesso_atividade", False),
+                "download_recursos": data.get("download_recursos", False),
+                "upload_documentos": data.get("upload_documentos", False),
+                "relatorio_respostas": data.get("relatorio_respostas", ""),
+            },
         }
+
+        # Guarda dados qualitativos
+        self._save_to_json(f"qualitative_{activity_id}.json", qualitative_data)
+
         print(
-            f"Qualitative analytics updated for student {student_id} in activity {activity_id}"
+            f"Dados qualitativos salvos para estudante {student_id} na atividade {activity_id}"
         )
-        # adicionar a lógica para guardar os dados
 
 
-# Observer Concreto para Analytics Quantitativas
 class QuantitativeAnalyticsObserver(AnalyticsObserver):
     def update(self, activity_id: str, student_id: str, data: Dict[str, Any]) -> None:
-        # Processa e armazena analytics quantitativas
+        # Processa dados quantitativos
         quantitative_data = {
-            "numero_acessos": data.get("numero_acessos", 0),
-            "downloads_recursos": data.get("downloads_recursos", 0),
-            "progresso_atividade": data.get("progresso_atividade", 0.0),
+            "activity_id": activity_id,
+            "student_id": student_id,
+            "type": "quantitative",
+            "data": {
+                "numero_acessos": data.get("numero_acessos", 0),
+                "downloads_recursos": data.get("downloads_recursos", 0),
+                "progresso_atividade": data.get("progresso_atividade", 0.0),
+            },
         }
+
+        # Guarda dados quantitativos
+        self._save_to_json(f"quantitative_{activity_id}.json", quantitative_data)
+
         print(
-            f"Quantitative analytics updated for student {student_id} in activity {activity_id}"
+            f"Dados quantitativos salvos para estudante {student_id} na atividade {activity_id}"
         )
-        # adicionar a lógica para guardar os dados
 
 
-# Subject (Observable)
-class ActivityAnalytics:
-    def __init__(self):
-        self._observers: List[AnalyticsObserver] = []
+# Exemplo de utilização:
+if __name__ == "__main__":
+    # Criar observers
+    qual_observer = QualitativeAnalyticsObserver()
+    quant_observer = QuantitativeAnalyticsObserver()
 
-    def attach(self, observer: AnalyticsObserver) -> None:
-        if observer not in self._observers:
-            self._observers.append(observer)
+    # Dados para exemplo
+    test_data = {
+        "acesso_atividade": True,
+        "download_recursos": True,
+        "upload_documentos": True,
+        "relatorio_respostas": "Bom desempenho",
+        "numero_acessos": 5,
+        "downloads_recursos": 3,
+        "progresso_atividade": 75.0,
+    }
 
-    def detach(self, observer: AnalyticsObserver) -> None:
-        self._observers.remove(observer)
-
-    def notify(self, activity_id: str, student_id: str, data: Dict[str, Any]) -> None:
-        for observer in self._observers:
-            observer.update(activity_id, student_id, data)
-
-    def record_activity(
-        self, activity_id: str, student_id: str, data: Dict[str, Any]
-    ) -> None:
-        # Método para registrar uma atividade e notificar os observers
-        print(f"Recording activity for student {student_id} in activity {activity_id}")
-        self.notify(activity_id, student_id, data)
+    # Teste guardar
+    qual_observer.update("ACT001", "STD001", test_data)
+    quant_observer.update("ACT001", "STD001", test_data)
