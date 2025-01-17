@@ -25,7 +25,7 @@ class ActivityFacade:
         if activity_id:
             self.analytics.record_activity(
                 activity_id,
-                "student_test",  # <------------------ Passar o ID real do estudante aqui
+                "student_test",  # Você deve passar o ID real do estudante aqui
                 {"acesso_atividade": True, "numero_acessos": 1},
             )
         return self.db.access_data(activity_id)
