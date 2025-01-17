@@ -1,4 +1,4 @@
-# observers.py
+# observer.py
 
 #  importação do módulo abc (Abstract Base Classes) do Python, que fornece infraestrutura para criar classes abstratas
 from abc import ABC, abstractmethod
@@ -78,20 +78,20 @@ class QuantitativeAnalyticsObserver(AnalyticsObserver):
 # Subject (Observable)
 class ActivityAnalytics:
     def __init__(self):
-        self._observers: List[AnalyticsObserver] = []
+        self._observer: List[AnalyticsObserver] = []
 
     def attach(self, observer: AnalyticsObserver) -> None:
         """Adiciona um novo observer"""
-        if observer not in self._observers:
-            self._observers.append(observer)
+        if observer not in self._observer:
+            self._observer.append(observer)
 
     def detach(self, observer: AnalyticsObserver) -> None:
         """Remove um observer"""
-        self._observers.remove(observer)
+        self._observer.remove(observer)
 
     def notify(self, activity_id: str, student_id: str, data: Dict[str, Any]) -> None:
         """Notifica todos os observers"""
-        for observer in self._observers:
+        for observer in self._observer:
             observer.update(activity_id, student_id, data)
 
     def record_activity(
