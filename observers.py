@@ -12,7 +12,7 @@ from datetime import datetime
 import json
 import os
 
-
+# Interface do Observer
 class AnalyticsObserver(ABC):
     @abstractmethod
     def update(self, activity_id: str, student_id: str, data: Dict[str, Any]) -> None:
@@ -20,30 +20,25 @@ class AnalyticsObserver(ABC):
 
     def _save_to_json(self, filename: str, data: Dict[str, Any]) -> None:
         """Método auxiliar para salvar dados em arquivo JSON"""
-        # Cria o diretório 'analytics_data' caso não exista
         os.makedirs("analytics_data", exist_ok=True)
-
         filepath = f"analytics_data/{filename}"
 
-        # Carrega dados existentes ou cria lista vazia
         if os.path.exists(filepath):
             with open(filepath, "r") as file:
                 existing_data = json.load(file)
         else:
             existing_data = []
 
-        # Adiciona timestamp aos dados
         data["timestamp"] = datetime.now().isoformat()
         existing_data.append(data)
 
-        # Guarda dados atualizados
         with open(filepath, "w") as file:
             json.dump(existing_data, file, indent=4)
 
 
+# Observer Qualitativo
 class QualitativeAnalyticsObserver(AnalyticsObserver):
     def update(self, activity_id: str, student_id: str, data: Dict[str, Any]) -> None:
-        # Processa dados qualitativos
         qualitative_data = {
             "activity_id": activity_id,
             "student_id": student_id,
@@ -55,18 +50,15 @@ class QualitativeAnalyticsObserver(AnalyticsObserver):
                 "relatorio_respostas": data.get("relatorio_respostas", ""),
             },
         }
-
-        # Guarda dados qualitativos
         self._save_to_json(f"qualitative_{activity_id}.json", qualitative_data)
-
         print(
             f"Dados qualitativos salvos para estudante {student_id} na atividade {activity_id}"
         )
 
 
+# Observer Quantitativo
 class QuantitativeAnalyticsObserver(AnalyticsObserver):
     def update(self, activity_id: str, student_id: str, data: Dict[str, Any]) -> None:
-        # Processa dados quantitativos
         quantitative_data = {
             "activity_id": activity_id,
             "student_id": student_id,
@@ -77,32 +69,36 @@ class QuantitativeAnalyticsObserver(AnalyticsObserver):
                 "progresso_atividade": data.get("progresso_atividade", 0.0),
             },
         }
-
-        # Guarda dados quantitativos
         self._save_to_json(f"quantitative_{activity_id}.json", quantitative_data)
-
         print(
             f"Dados quantitativos salvos para estudante {student_id} na atividade {activity_id}"
         )
 
 
-# Exemplo de utilização:
-if __name__ == "__main__":
-    # Criar observers
-    qual_observer = QualitativeAnalyticsObserver()
-    quant_observer = QuantitativeAnalyticsObserver()
+# Subject (Observable)
+class ActivityAnalytics:
+    def __init__(self):
+        self._observers: List[AnalyticsObserver] = []
 
-    # Dados para exemplo
-    test_data = {
-        "acesso_atividade": True,
-        "download_recursos": True,
-        "upload_documentos": True,
-        "relatorio_respostas": "Bom desempenho",
-        "numero_acessos": 5,
-        "downloads_recursos": 3,
-        "progresso_atividade": 75.0,
-    }
+    def attach(self, observer: AnalyticsObserver) -> None:
+        """Adiciona um novo observer"""
+        if observer not in self._observers:
+            self._observers.append(observer)
 
-    # Teste guardar
-    qual_observer.update("ACT001", "STD001", test_data)
-    quant_observer.update("ACT001", "STD001", test_data)
+    def detach(self, observer: AnalyticsObserver) -> None:
+        """Remove um observer"""
+        self._observers.remove(observer)
+
+    def notify(self, activity_id: str, student_id: str, data: Dict[str, Any]) -> None:
+        """Notifica todos os observers"""
+        for observer in self._observers:
+            observer.update(activity_id, student_id, data)
+
+    def record_activity(
+        self, activity_id: str, student_id: str, data: Dict[str, Any]
+    ) -> None:
+        """Registra uma atividade e notifica os observers"""
+        print(
+            f"Registrando atividade para estudante {student_id} na atividade {activity_id}"
+        )
+        self.notify(activity_id, student_id, data)
