@@ -2,7 +2,7 @@
 
 from singleton_db import SingletonDB, ActivityRepository
 from observer import (
-    AnalyticsObserver,
+    ActivityAnalytics,
     QualitativeAnalyticsObserver,
     QuantitativeAnalyticsObserver,
 )
@@ -14,7 +14,7 @@ class ActivityFacade:
         self.repository = ActivityRepository(self.db)
 
         # Inicializar o sistema de analytics
-        self.analytics = AnalyticsObserver()
+        self.analytics = ActivityAnalytics()
 
         # Anexar os observers
         self.analytics.attach(QualitativeAnalyticsObserver())
@@ -34,10 +34,10 @@ class ActivityFacade:
 
     def access_activity_data(self, activity_id):
         """
-        Registra o acesso à atividade e retorna os seus dados.
+        Registra o acesso à atividade e retorna seus dados.
 
         Parâmetros:
-            activity_id (str): ID da atividade a ser acedida.
+            activity_id (str): ID da atividade a ser acessada.
 
         Retorna:
             dict ou None: Dados da atividade.
@@ -45,14 +45,14 @@ class ActivityFacade:
         if activity_id:
             self.analytics.record_activity(
                 activity_id,
-                "student_test",  # Passar aqui o ID do estudante
+                "student_test",  # Você deve passar o ID real do estudante aqui
                 {"acesso_atividade": True, "numero_acessos": 1},
             )
         return self.repository.get_activity(activity_id)
 
     def update_activity(self, activity_id, resumo=None, instrucoes=None):
         """
-        Atualiza os dados duma atividade existente.
+        Atualiza os dados de uma atividade existente.
 
         Parâmetros:
             activity_id (str): ID da atividade a ser atualizada.
@@ -131,3 +131,4 @@ class ActivityFacade:
                 ],
             },
         ]
+
