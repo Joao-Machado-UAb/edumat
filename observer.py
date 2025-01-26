@@ -12,93 +12,71 @@ from datetime import datetime
 import json
 import os
 
-# Interface do Observer
-class AnalyticsObserver(ABC):
+class AnalyticsStrategy(ABC):
+    """Estratégia abstrata para processamento de analytics"""
+
     @abstractmethod
-    def update(self, activity_id: str, student_id: str, data: Dict[str, Any]) -> None:
+    def process(self, data: Dict[str, Any]) -> Dict[str, Any]:
         pass
 
-    def _save_to_json(self, filename: str, data: Dict[str, Any]) -> None:
-        """Método auxiliar para guardar dados em arquivo JSON"""
+
+class QualitativeAnalyticsStrategy(AnalyticsStrategy):
+    def process(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        return {
+            "type": "qualitative",
+            "acesso_atividade": data.get("acesso_atividade", False),
+            "download_recursos": data.get("download_recursos", False),
+            "upload_documentos": data.get("upload_documentos", False),
+        }
+
+
+class QuantitativeAnalyticsStrategy(AnalyticsStrategy):
+    def process(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        return {
+            "type": "quantitative",
+            "numero_acessos": data.get("numero_acessos", 0),
+            "progresso_atividade": data.get("progresso_atividade", 0.0),
+        }
+
+
+class AnalyticsService:
+    """Serviço centralizado de processamento de analytics"""
+
+    def __init__(self, strategies: list):
+        self.strategies = strategies
+        self._ensure_analytics_dir()
+
+    def _ensure_analytics_dir(self):
         os.makedirs("analytics_data", exist_ok=True)
-        filepath = f"analytics_data/{filename}"
 
-        if os.path.exists(filepath):
-            with open(filepath, "r") as file:
-                existing_data = json.load(file)
-        else:
-            existing_data = []
+    def record_analytics(self, activity_id: str, student_id: str, data: Dict[str, Any]):
+        """Processa e grava dados de analytics"""
+        processed_data = {
+            "activity_id": activity_id,
+            "student_id": student_id,
+            "timestamp": datetime.now().isoformat(),
+        }
 
-        data["timestamp"] = datetime.now().isoformat()
+        for strategy in self.strategies:
+            processed_data.update(strategy.process(data))
+
+        self._save_to_file(processed_data, activity_id)
+
+    def _save_to_file(self, data: Dict[str, Any], activity_id: str):
+        """Grava dados de analytics em ficheiro JSON"""
+        filename = f"analytics_data/{data['type']}_{activity_id}.json"
+
+        existing_data = self._load_existing_data(filename)
         existing_data.append(data)
 
-        with open(filepath, "w") as file:
+        with open(filename, "w") as file:
             json.dump(existing_data, file, indent=4)
 
+    def _load_existing_data(self, filename: str) -> list:
+        """Carrega dados existentes ou retorna lista vazia"""
+        try:
+            with open(filename, "r") as file:
+                return json.load(file)
+        except FileNotFoundError:
+            return []
 
-# Observer Qualitativo
-class QualitativeAnalyticsObserver(AnalyticsObserver):
-    def update(self, activity_id: str, student_id: str, data: Dict[str, Any]) -> None:
-        qualitative_data = {
-            "activity_id": activity_id,
-            "student_id": student_id,
-            "type": "qualitative",
-            "data": {
-                "acesso_atividade": data.get("acesso_atividade", False),
-                "download_recursos": data.get("download_recursos", False),
-                "upload_documentos": data.get("upload_documentos", False),
-                "relatorio_respostas": data.get("relatorio_respostas", ""),
-            },
-        }
-        self._save_to_json(f"qualitative_{activity_id}.json", qualitative_data)
-        print(
-            f"Dados qualitativos salvos para estudante {student_id} na atividade {activity_id}"
-        )
-
-
-# Observer Quantitativo
-class QuantitativeAnalyticsObserver(AnalyticsObserver):
-    def update(self, activity_id: str, student_id: str, data: Dict[str, Any]) -> None:
-        quantitative_data = {
-            "activity_id": activity_id,
-            "student_id": student_id,
-            "type": "quantitative",
-            "data": {
-                "numero_acessos": data.get("numero_acessos", 0),
-                "downloads_recursos": data.get("downloads_recursos", 0),
-                "progresso_atividade": data.get("progresso_atividade", 0.0),
-            },
-        }
-        self._save_to_json(f"quantitative_{activity_id}.json", quantitative_data)
-        print(
-            f"Dados quantitativos salvos para estudante {student_id} na atividade {activity_id}"
-        )
-
-
-# Subject (Observable)
-class ActivityAnalytics:
-    def __init__(self):
-        self._observer: List[AnalyticsObserver] = []
-
-    def attach(self, observer: AnalyticsObserver) -> None:
-        """Adiciona um novo observer"""
-        if observer not in self._observer:
-            self._observer.append(observer)
-
-    def detach(self, observer: AnalyticsObserver) -> None:
-        """Remove um observer"""
-        self._observer.remove(observer)
-
-    def notify(self, activity_id: str, student_id: str, data: Dict[str, Any]) -> None:
-        """Notifica todos os observers"""
-        for observer in self._observer:
-            observer.update(activity_id, student_id, data)
-
-    def record_activity(
-        self, activity_id: str, student_id: str, data: Dict[str, Any]
-    ) -> None:
-        """Registra uma atividade e notifica os observers"""
-        print(
-            f"Registrando atividade para estudante {student_id} na atividade {activity_id}"
-        )
-        self.notify(activity_id, student_id, data)
