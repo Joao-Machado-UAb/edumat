@@ -1,7 +1,7 @@
 # activity_facade.py (refatorado)
 
 from singleton_db import SingletonDB, ActivityRepository
-from observer import (
+from observers import (
     ActivityAnalytics,
     QualitativeAnalyticsObserver,
     QuantitativeAnalyticsObserver,
@@ -131,4 +131,3 @@ class ActivityFacade:
                 ],
             },
         ]
-
