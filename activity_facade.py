@@ -9,7 +9,7 @@ from observers import (
 
 
 class ActivityFacade:
-    """Facade para gestão unificada de atividades e analytics"""
+    """Facade para gestão unica de atividades e analytics"""
 
     def __init__(self):
         self.db_service = Singleton_db()
