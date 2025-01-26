@@ -2,7 +2,7 @@
 
 from singleton_db import SingletonDB, ActivityRepository
 from observer import (
-    ActivityAnalytics,
+    AnalyticsObserver,
     QualitativeAnalyticsObserver,
     QuantitativeAnalyticsObserver,
 )
@@ -14,7 +14,7 @@ class ActivityFacade:
         self.repository = ActivityRepository(self.db)
 
         # Inicializar o sistema de analytics
-        self.analytics = ActivityAnalytics()
+        self.analytics = AnalyticsObserver()
 
         # Anexar os observers
         self.analytics.attach(QualitativeAnalyticsObserver())
