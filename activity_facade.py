@@ -2,7 +2,7 @@
 
 from singleton_db import SingletonDB, ActivityRepository
 from observer import (
-    ActivityAnalytics,
+    AnalyticsObserver,
     QualitativeAnalyticsObserver,
     QuantitativeAnalyticsObserver,
 )
