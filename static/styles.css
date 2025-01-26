@@ -42,7 +42,10 @@ text-align: left;
 table th {
 background-color: #f4f4f4;
 }
-h1, h2 {
+h1 {
+color: white;
+}
+h2 {
 color: #1e90ff;
 }
 label {
