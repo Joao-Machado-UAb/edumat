@@ -3,7 +3,7 @@ from typing import Dict, Any, Optional
 from datetime import datetime
 
 
-class DatabaseService:
+class SingletonDB:
     """Serviço de gestão de base de dados com padrão Singleton"""
 
     _instance = None
