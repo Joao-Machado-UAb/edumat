@@ -1,45 +1,64 @@
 # singleton_db.py
 
-from typing import Dict, Any, Optional
-from datetime import datetime
+DEFAULT_RESUMO = "Resumo de equações de 7º ano: Aqui pode encontrar um resumo de equações de 7º ano."
 
-class DatabaseService:
-    """Serviço de gestão de base de dados com padrão Singleton"""
+
+class SingletonDB:
+    # Classe Singleton para administrar o banco de dados
+
     _instance = None
 
-    def __new__(cls):
+    def __new__(cls, *args, **kwargs):
         if not cls._instance:
-            cls._instance = super().__new__(cls)
-            cls._instance._database = {}
+            cls._instance = super(SingletonDB, cls).__new__(cls)
+            cls._instance.db = {}
         return cls._instance
 
-    def create_activity(self, activity_id: str, 
-                         resumo: str = "Resumo de equações de 7º ano",
-                         instrucoes: str = "https://www.matematica.pt/aulas-matematica.php?ano=7") -> Dict[str, Any]:
-        """Cria uma nova atividade no banco de dados"""
-        if activity_id not in self._database:
-            self._database[activity_id] = {
-                "resumo": resumo,
-                "instrucoes": instrucoes,
-                "created_at": datetime.now().isoformat()
+    def get_database(self):
+        # Retorna o banco de dados
+        return self._instance.db
+
+    def create_instance(self, activity_id):
+        """
+        Cria uma entrada no banco de dados se ela não existir
+                Parâmetros:
+            activity_id: ID da atividade a ser criada
+        Retorna:
+            A entrada criada ou já existente
+        """
+        if activity_id not in self._instance.db:
+            self._instance.db[activity_id] = {
+                "resumo": DEFAULT_RESUMO,
+                "instrucoes": "https://www.matematica.pt/aulas-matematica.php?ano=7",
             }
-        return self._database[activity_id]
+        return self._instance.db[activity_id]
 
-    def update_activity(self, activity_id: str, 
-                        resumo: Optional[str] = None, 
-                        instrucoes: Optional[str] = None) -> Dict[str, Any]:
-        """Atualiza os dados duma atividade existente"""
-        if activity_id not in self._database:
-            raise KeyError(f"Atividade com ID '{activity_id}' não encontrada")
-        
+    def access_data(self, activity_id):
+        """
+        Retorna os dados de uma entrada específica
+
+        Parâmetros:
+            activity_id: ID da atividade a ser acessada
+        Retorna:
+            Os dados da entrada, ou None se não existir
+        """
+        return self._instance.db.get(activity_id, None)
+
+    def execute_operations(self, activity_id, resumo=None, instrucoes=None):
+        """
+        Atualiza os dados de uma entrada existente no banco de dados
+
+        Parâmetros:
+            activity_id: ID da atividade a ser atualizada
+            resumo: Novo resumo (opcional).
+            instrucoes: Novas instruções (opcional).
+        """
+        if activity_id not in self._instance.db:
+            raise KeyError(
+                f"Activity ID '{activity_id}' não encontrado no banco de dados."
+            )
         if resumo:
-            self._database[activity_id]["resumo"] = resumo
+            self._instance.db[activity_id]["resumo"] = resumo
         if instrucoes:
-            self._database[activity_id]["instrucoes"] = instrucoes
-        
-        self._database[activity_id]["updated_at"] = datetime.now().isoformat()
-        return self._database[activity_id]
-
-    def get_activity(self, activity_id: str) -> Optional[Dict[str, Any]]:
-        """Recupera os dados de uma atividade"""
-        return self._database.get(activity_id)
+            self._instance.db[activity_id]["instrucoes"] = instrucoes
+        return self._instance.db[activity_id]
