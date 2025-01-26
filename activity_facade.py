@@ -14,7 +14,7 @@ class ActivityFacade:
         self.repository = ActivityRepository(self.db)
 
         # Inicializar o sistema de analytics
-        self.analytics = ActivityAnalytics()
+        self.analytics = AnalyticsObserver()
 
         # Anexar os observers
         self.analytics.attach(QualitativeAnalyticsObserver())
