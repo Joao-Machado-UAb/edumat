@@ -1,55 +1,46 @@
-# singleton_db.py
-from typing import Dict, Any, Optional
-from datetime import datetime
+# observers.py
+from abc import ABC, abstractmethod
+from typing import Dict, Any
+from singleton_db import SingletonDB
 
 
-class SingletonDB:
-    _instance = None
+class AnalyticsObserver(ABC):
+    def __init__(self, db_service: SingletonDB):
+        self.db_service = db_service
 
-    def __new__(cls):
-        if not cls._instance:
-            cls._instance = super().__new__(cls)
-            cls._instance._database = {}
-        return cls._instance
+    @abstractmethod
+    def process(self, activity_id: str, student_id: str, data: Dict[str, Any]):
+        pass
 
-    def create_activity(
-        self,
-        activity_id: str,
-        resumo: str = "Resumo de equações de 7º ano",
-        instrucoes: str = "https://www.matematica.pt/aulas-matematica.php?ano=7",
-    ) -> Dict[str, Any]:
-        if activity_id not in self._database:
-            self._database[activity_id] = {
-                "resumo": resumo,
-                "instrucoes": instrucoes,
-                "created_at": datetime.now().isoformat(),
-                "analytics": {"qualitative": [], "quantitative": []},
-            }
-        return self._database[activity_id]
 
-    def update_activity(
-        self,
-        activity_id: str,
-        resumo: Optional[str] = None,
-        instrucoes: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        if activity_id not in self._database:
-            raise KeyError(f"Atividade com ID '{activity_id}' não encontrada")
+class QualitativeAnalyticsObserver(AnalyticsObserver):
+    def process(self, activity_id: str, student_id: str, data: Dict[str, Any]):
+        qualitative_data = {
+            "student_id": student_id,
+            "acesso_atividade": data.get("acesso_atividade", False),
+            "download_recursos": data.get("download_recursos", False),
+        }
+        self.db_service.record_analytics(activity_id, "qualitative", qualitative_data)
 
-        if resumo:
-            self._database[activity_id]["resumo"] = resumo
-        if instrucoes:
-            self._database[activity_id]["instrucoes"] = instrucoes
 
-        self._database[activity_id]["updated_at"] = datetime.now().isoformat()
-        return self._database[activity_id]
+class QuantitativeAnalyticsObserver(AnalyticsObserver):
+    def process(self, activity_id: str, student_id: str, data: Dict[str, Any]):
+        quantitative_data = {
+            "student_id": student_id,
+            "numero_acessos": data.get("numero_acessos", 0),
+            "progresso_atividade": data.get("progresso_atividade", 0.0),
+        }
+        self.db_service.record_analytics(activity_id, "quantitative", quantitative_data)
 
-    def record_analytics(
-        self, activity_id: str, analytics_type: str, data: Dict[str, Any]
-    ):
-        if activity_id not in self._database:
-            raise KeyError(f"Atividade com ID '{activity_id}' não encontrada")
 
-        self._database[activity_id]["analytics"][analytics_type].append(
-            {"timestamp": datetime.now().isoformat(), "data": data}
-        )
+class ActivityAnalytics:
+    def __init__(self, db_service: SingletonDB):
+        self.db_service = db_service
+        self.observers = []
+
+    def attach(self, observer: AnalyticsObserver):
+        self.observers.append(observer)
+
+    def notify(self, activity_id: str, student_id: str, data: Dict[str, Any]):
+        for observer in self.observers:
+            observer.process(activity_id, student_id, data)
