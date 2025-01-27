@@ -1,10 +1,10 @@
-# app.py
+# app.py (refatorização)
 
 from flask import Flask, jsonify, request, render_template
-from activity_facade import ActivityFacade
+from activity_manager import ActivityManager
 
 app = Flask(__name__)
-activity_facade = ActivityFacade()
+activity_manager = ActivityManager()
 
 @app.route("/")
 def index():
@@ -23,12 +23,12 @@ def json_params():
 
 @app.route("/analytics_list")
 def analytics_list():
-    return jsonify(activity_facade.get_analytics_list())
+    return jsonify(activity_manager.get_analytics_list())
 
 @app.route("/user_url")
 def user_url():
     activity_id = request.args.get("activityID")
-    activity_facade.create_activity(activity_id)
+    activity_manager.create_activity(activity_id)
     return jsonify({"url": f"https://edumat.onrender.com/atividade?id={activity_id}"})
 
 @app.route("/deploy", methods=["POST"])
@@ -38,7 +38,7 @@ def deploy():
     student_id = data.get("Inven!RAstdID")
     json_params = data.get("json_params", {})
     
-    activity_facade.update_activity(
+    activity_manager.update_activity(
         activity_id,
         resumo=json_params.get("resumo"),
         instrucoes=json_params.get("instrucoes")
@@ -53,7 +53,7 @@ def equacoes():
     activity_id = request.args.get("activityID")
     student_id = request.args.get("student_id")
     
-    activity = activity_facade.get_activity(activity_id, student_id)
+    activity = activity_manager.get_activity(activity_id, student_id)
     if not activity:
         activity = {
             "resumo": "Resumo de equações de 7º ano: Aqui pode encontrar um resumo das equações de 7º ano.",
