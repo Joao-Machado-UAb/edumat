@@ -2,7 +2,7 @@
 
 from typing import Dict, Any, Optional
 from datetime import datetime
-from observers import ActivityAnalytics, QualitativeAnalyticsObserver, QuantitativeAnalyticsObserver
+from observer import ActivityAnalytics, QualitativeAnalyticsObserver, QuantitativeAnalyticsObserver
 
 class ActivityManager:
     _instance = None
@@ -12,7 +12,7 @@ class ActivityManager:
             cls._instance = super(ActivityManager, cls).__new__(cls)
             cls._instance.activities = {}
             cls._instance.analytics = ActivityAnalytics()
-            # Inicializar analytics observers
+            # Inicializar analytics observer
             cls._instance.analytics.attach(QualitativeAnalyticsObserver())
             cls._instance.analytics.attach(QuantitativeAnalyticsObserver())
         return cls._instance
