@@ -1,48 +1,69 @@
-# activity_facade.py
+# activity_facade.py (refatorização)
 
-from singleton_db import SingletonDB
-from observer import (
-    ActivityAnalytics,
-    QualitativeAnalyticsObserver,
-    QuantitativeAnalyticsObserver,
-)
-
+from typing import Dict, Any, Optional
+from datetime import datetime
+from observers import ActivityAnalytics, QualitativeAnalyticsObserver, QuantitativeAnalyticsObserver
 
 class ActivityFacade:
-    def __init__(self):
-        self.db = SingletonDB()
-        # Inicializar o sistema de analytics
-        self.analytics = ActivityAnalytics()
-        # Anexar os observers
-        self.analytics.attach(QualitativeAnalyticsObserver())
-        self.analytics.attach(QuantitativeAnalyticsObserver())
+    _instance = None
+    
+    def __new__(cls):
+        if not cls._instance:
+            cls._instance = super(ActivityFacade, cls).__new__(cls)
+            cls._instance.activities = {}
+            cls._instance.analytics = ActivityAnalytics()
+            # Inicializar analytics observers
+            cls._instance.analytics.attach(QualitativeAnalyticsObserver())
+            cls._instance.analytics.attach(QuantitativeAnalyticsObserver())
+        return cls._instance
 
-    def create_activity(self, activity_id):
-        return self.db.create_instance(activity_id)
+    def create_activity(self, activity_id: str) -> Dict[str, Any]:
+        if activity_id not in self.activities:
+            self.activities[activity_id] = {
+                "resumo": "Resumo de equações de 7º ano: Aqui pode encontrar um resumo de equações de 7º ano.",
+                "instrucoes": "https://www.matematica.pt/aulas-matematica.php?ano=7",
+                "created_at": datetime.now().isoformat(),
+                "access_count": 0
+            }
+        return self.activities[activity_id]
 
-    def access_activity_data(self, activity_id):
-        # Registrar o acesso à atividade
-        if activity_id:
-            self.analytics.record_activity(
-                activity_id,
-                "student_test",  # Você deve passar o ID real do estudante aqui
-                {"acesso_atividade": True, "numero_acessos": 1},
-            )
-        return self.db.access_data(activity_id)
+    def get_activity(self, activity_id: str, student_id: Optional[str] = None) -> Optional[Dict[str, Any]]:
+        activity = self.activities.get(activity_id)
+        if activity and student_id:
+            self.activities[activity_id]["access_count"] += 1
+            self.record_activity_access(activity_id, student_id)
+        return activity
 
-    def update_activity(self, activity_id, resumo=None, instrucoes=None):
-        return self.db.execute_operations(activity_id, resumo, instrucoes)
+    def update_activity(self, activity_id: str, resumo: Optional[str] = None, 
+                       instrucoes: Optional[str] = None) -> Dict[str, Any]:
+        if activity_id not in self.activities:
+            raise KeyError(f"Atividade '{activity_id}' não encontrada.")
+            
+        if resumo:
+            self.activities[activity_id]["resumo"] = resumo
+        if instrucoes:
+            self.activities[activity_id]["instrucoes"] = instrucoes
+            
+        self.activities[activity_id]["updated_at"] = datetime.now().isoformat()
+        return self.activities[activity_id]
 
-    def get_analytics_list(self):
+    def record_activity_access(self, activity_id: str, student_id: str):
+        self.analytics.record_activity(
+            activity_id,
+            student_id,
+            {
+                "acesso_atividade": True,
+                "numero_acessos": self.activities[activity_id]["access_count"]
+            }
+        )
+
+    def get_analytics_list(self) -> Dict[str, list]:
         return {
             "qualAnalytics": [
                 {"name": "Acesso à atividade", "type": "boolean"},
                 {"name": "Download de recursos", "type": "boolean"},
                 {"name": "Upload de documentos", "type": "boolean"},
-                {
-                    "name": "Relatório das respostas concretamente dadas",
-                    "type": "text/plain",
-                },
+                {"name": "Relatório das respostas concretamente dadas", "type": "text/plain"},
             ],
             "quantAnalytics": [
                 {"name": "Número de acessos", "type": "integer"},
@@ -50,41 +71,3 @@ class ActivityFacade:
                 {"name": "Progresso na atividade (%)", "type": "integer"},
             ],
         }
-
-    def get_analytics_data(self):
-        return [
-            {
-                "inveniraStdID": 1001,
-                "qualAnalytics": [
-                    {"name": "Acesso à atividade", "value": True},
-                    {"name": "Download de recursos", "value": True},
-                    {"name": "Upload de documentos", "value": True},
-                    {
-                        "name": "Relatório das respostas concretamente dadas",
-                        "value": "Suficiente",
-                    },
-                ],
-                "quantAnalytics": [
-                    {"name": "Número de acessos", "value": 50},
-                    {"name": "Download de recursos", "value": 12},
-                    {"name": "Progresso na atividade (%)", "value": 10.0},
-                ],
-            },
-            {
-                "inveniraStdID": 1002,
-                "qualAnalytics": [
-                    {"name": "Acesso à atividade", "value": True},
-                    {"name": "Download de recursos", "value": True},
-                    {"name": "Upload de documentos", "value": True},
-                    {
-                        "name": "Relatório das respostas concretamente dadas",
-                        "value": "Suficiente",
-                    },
-                ],
-                "quantAnalytics": [
-                    {"name": "Número de acessos", "value": 60},
-                    {"name": "Download de recursos", "value": 16},
-                    {"name": "Progresso na atividade (%)", "value": 40.0},
-                ],
-            },
-        ]
