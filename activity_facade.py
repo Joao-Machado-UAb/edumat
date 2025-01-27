@@ -1,76 +1,39 @@
-# activity_facade.py (refatorado)
+# activity_facade.py
 
-from singleton_db import SingletonDB, ActivityRepository
+from singleton_db import SingletonDB
 from observer import (
-    AnalyticsObserver,
+    ActivityAnalytics,
     QualitativeAnalyticsObserver,
     QuantitativeAnalyticsObserver,
 )
 
+
 class ActivityFacade:
     def __init__(self):
-        # Inicializar o banco de dados e repositório
-        self.db = SingletonDB().get_database()
-        self.repository = ActivityRepository(self.db)
-
+        self.db = SingletonDB()
         # Inicializar o sistema de analytics
-        self.analytics = AnalyticsObserver()
-
+        self.analytics = ActivityAnalytics()
         # Anexar os observers
         self.analytics.attach(QualitativeAnalyticsObserver())
         self.analytics.attach(QuantitativeAnalyticsObserver())
 
     def create_activity(self, activity_id):
-        """
-        Cria uma nova atividade no banco de dados usando o repositório.
-
-        Parâmetros:
-            activity_id (str): ID da atividade a ser criada.
-
-        Retorna:
-            dict: Dados da atividade criada.
-        """
-        return self.repository.create_activity(activity_id)
+        return self.db.create_instance(activity_id)
 
     def access_activity_data(self, activity_id):
-        """
-        Registra o acesso à atividade e retorna seus dados.
-
-        Parâmetros:
-            activity_id (str): ID da atividade a ser acessada.
-
-        Retorna:
-            dict ou None: Dados da atividade.
-        """
+        # Registrar o acesso à atividade
         if activity_id:
             self.analytics.record_activity(
                 activity_id,
                 "student_test",  # Você deve passar o ID real do estudante aqui
                 {"acesso_atividade": True, "numero_acessos": 1},
             )
-        return self.repository.get_activity(activity_id)
+        return self.db.access_data(activity_id)
 
     def update_activity(self, activity_id, resumo=None, instrucoes=None):
-        """
-        Atualiza os dados de uma atividade existente.
-
-        Parâmetros:
-            activity_id (str): ID da atividade a ser atualizada.
-            resumo (str, opcional): Novo resumo.
-            instrucoes (str, opcional): Novas instruções.
-
-        Retorna:
-            dict: Dados atualizados da atividade.
-        """
-        return self.repository.update_activity(activity_id, resumo, instrucoes)
+        return self.db.execute_operations(activity_id, resumo, instrucoes)
 
     def get_analytics_list(self):
-        """
-        Retorna a lista de tipos de analytics disponíveis.
-
-        Retorna:
-            dict: Dados de analytics qualitativos e quantitativos.
-        """
         return {
             "qualAnalytics": [
                 {"name": "Acesso à atividade", "type": "boolean"},
@@ -89,12 +52,6 @@ class ActivityFacade:
         }
 
     def get_analytics_data(self):
-        """
-        Retorna os dados de analytics registrados.
-
-        Retorna:
-            list: Lista de dados de analytics por estudante.
-        """
         return [
             {
                 "inveniraStdID": 1001,
