@@ -1,15 +1,15 @@
-# activity_facade.py (refatorização)
+# activity_manager.py (refatorização)
 
 from typing import Dict, Any, Optional
 from datetime import datetime
 from observers import ActivityAnalytics, QualitativeAnalyticsObserver, QuantitativeAnalyticsObserver
 
-class ActivityFacade:
+class ActivityManager:
     _instance = None
     
     def __new__(cls):
         if not cls._instance:
-            cls._instance = super(ActivityFacade, cls).__new__(cls)
+            cls._instance = super(ActivityManager, cls).__new__(cls)
             cls._instance.activities = {}
             cls._instance.analytics = ActivityAnalytics()
             # Inicializar analytics observers
