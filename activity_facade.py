@@ -1,6 +1,6 @@
 # activity_facade.py
 
-from observers import ActivityAnalytics, QualitativeAnalyticsObserver, QuantitativeAnalyticsObserver
+from observer import ActivityAnalytics, QualitativeAnalyticsObserver, QuantitativeAnalyticsObserver
 from singleton_db import SingletonDB
 from activity_manager import ActivityManager
 from analytics_manager import AnalyticsManager
