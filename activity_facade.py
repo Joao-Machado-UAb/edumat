@@ -26,3 +26,4 @@ class ActivityFacade:
 
     def get_analytics_data(self):
         return self.analytics_manager.get_analytics_data()
+        
