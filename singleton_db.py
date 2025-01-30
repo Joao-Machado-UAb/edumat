@@ -1,10 +1,8 @@
 # singleton_db.py
 
-DEFAULT_RESUMO = "Resumo de equações de 7º ano: Aqui pode encontrar um resumo de equações de 7º ano."
-
-
 class SingletonDB:
-    # Classe Singleton para administrar o banco de dados
+
+    DEFAULT_RESUMO = "Resumo de equações de 7º ano: Aqui pode encontrar um resumo de equações de 7º ano."
 
     _instance = None
 
@@ -15,7 +13,6 @@ class SingletonDB:
         return cls._instance
 
     def get_database(self):
-        # Retorna o banco de dados
         return self._instance.db
 
     def create_instance(self, activity_id):
@@ -28,7 +25,7 @@ class SingletonDB:
         """
         if activity_id not in self._instance.db:
             self._instance.db[activity_id] = {
-                "resumo": DEFAULT_RESUMO,
+                "resumo": self.DEFAULT_RESUMO,
                 "instrucoes": "https://www.matematica.pt/aulas-matematica.php?ano=7",
             }
         return self._instance.db[activity_id]
