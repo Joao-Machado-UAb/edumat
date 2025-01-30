@@ -1,5 +1,10 @@
 # activity_facade.py
 
+from observers import ActivityAnalytics, QualitativeAnalyticsObserver, QuantitativeAnalyticsObserver
+from singleton_db import SingletonDB
+from activity_manager import ActivityManager
+from analytics_manager import AnalyticsManager
+
 class ActivityFacade:
     def __init__(self):
         analytics_system = ActivityAnalytics()
