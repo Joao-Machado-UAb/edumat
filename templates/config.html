@@ -1,0 +1,37 @@
+<!-- templates/config.html -->
+{% extends "base.html" %}
+
+{% block title %}Configuração da Atividade{% endblock %}
+
+{% block content %}
+    <h2>Configuração da Atividade</h2>
+    <form>
+        <div class="form-group">
+            <label for="resumo">Resumo:</label>
+            <input type="text" id="resumo" name="resumo" placeholder="Resumo da atividade">
+        </div>
+
+        <div class="form-group">
+            <label for="instrucoes">Instruções (URL):</label>
+            <input type="text" id="instrucoes" name="instrucoes" placeholder="URL das instruções">
+        </div>
+
+        <input type="hidden" id="hidden_resumo" name="hidden_resumo">
+        <input type="hidden" id="hidden_instrucoes" name="hidden_instrucoes">
+
+        <input type="submit" value="Salvar Configurações">
+    </form>
+
+    <a href="/">Voltar à Página Inicial</a>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.querySelector('form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        document.getElementById('hidden_resumo').value = document.getElementById('resumo').value;
+        document.getElementById('hidden_instrucoes').value = document.getElementById('instrucoes').value;
+        alert('Configuração salva com sucesso!');
+    });
+</script>
+{% endblock %}
